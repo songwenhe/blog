@@ -63,3 +63,68 @@ div:focus {
 .app-container {
   padding: 20px;
 }
+
+.t-dialog {
+}
+
+.t-btns {
+  .el-button.t-btn {
+    transition: all 0.2s linear;
+    border-radius: 0;
+    padding: 0.5rem;
+    &--primary {
+      background-color: $main-blue;
+    }
+    &--success {
+      background-color: $main-green;
+    }
+    &--danger {
+      background-color: $main-red;
+    }
+    &--info {
+      background-color: $main-grey;
+    }
+    &:not(.is-plain):hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.t-pagination.el-pagination {
+  padding-top: 1.25rem;
+  font-size: 1.25rem;
+  .number {
+    transition: all 0.1s linear;
+    font-size: 0.875rem;
+    font-weight: normal;
+    &.active {
+      color: $main-red;
+      font-size: 1.2rem;
+    }
+    &:hover {
+      color: $main-red;
+    }
+  }
+  .more {
+    &:hover {
+      color: $main-red;
+    }
+  }
+  .btn-prev,
+  .btn-next {
+    i {
+      font-size: 1rem;
+    }
+    &:not([disabled]) {
+      &:hover {
+        color: $main-red;
+      }
+    }
+  }
+  .el-input {
+    .el-input__inner:focus {
+      color: $main-red;
+      border-color: $main-red;
+    }
+  }
+}
