@@ -84,6 +84,62 @@ export const constantRoutes = [
 
     ]
   },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/note',
+    meta: {
+      title: '用户管理', icon: 'el-icon-s-management'
+    },
+    children: [
+      {
+        path: 'note',
+        name: 'Note',
+        component: () => import('@/views/content/note'),
+        meta: { title: '用户列表', icon: 'dashboard', actvieMenu: '/content/note' }
+      },
+      {
+        path: 'category',
+        name: 'Category',
+        component: () => import('@/views/content/category'),
+        meta: { title: '评论管理', icon: 'dashboard', actvieMenu: '/content/category' }
+      },
+      {
+        path: 'tag',
+        name: 'Tag',
+        component: () => import('@/views/content/tag'),
+        meta: { title: '回复管理', icon: 'dashboard', actvieMenu: '/content/tag' }
+      },
+    ]
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/note',
+    meta: {
+      title: '系统管理', icon: 'el-icon-s-management'
+    },
+    children: [
+      {
+        path: 'note',
+        name: 'Note',
+        component: () => import('@/views/content/note'),
+        meta: { title: '系统配置', icon: 'dashboard', actvieMenu: '/content/note' }
+      },
+      {
+        path: 'category',
+        name: 'Category',
+        component: () => import('@/views/content/category'),
+        meta: { title: '系统日志', icon: 'dashboard', actvieMenu: '/content/category' }
+      },
+      {
+        path: 'tag',
+        name: 'Tag',
+        component: () => import('@/views/content/tag'),
+        meta: { title: '阿里云OSS', icon: 'dashboard', actvieMenu: '/content/tag' }
+      },
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

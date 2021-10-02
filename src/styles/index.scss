@@ -128,3 +128,15 @@ div:focus {
     }
   }
 }
+
+.el-input {
+  .el-input__suffix {
+    top: 5px;
+  }
+}
+
+.t-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

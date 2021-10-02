@@ -8,9 +8,11 @@
 				@click="$emit('delete')"> </el-button>
 		</div>
 		<div class="search" v-if="showRight">
-			<el-input placeholder="请输入内容" v-model="input" clearable>
+			<el-input placeholder="请输入内容" :value="value" @input="input" @clear="$emit('clear')"
+				clearable>
 			</el-input>
-			<el-button icon="el-icon-search" type="primary"></el-button>
+			<el-button icon="el-icon-search" type="primary" @click="$emit('search')">
+			</el-button>
 		</div>
 	</div>
 </template>
@@ -25,22 +27,17 @@ export default {
 		showRight: {
 			type: Boolean,
 			default: true
+		},
+		value: {
+			type: String
 		}
 	},
 	data() {
-		return {
-			input: ''
-		}
+		return { search: this.value }
 	},
 	methods: {
-		add() {
-			this.$emit('add')
-		},
-		delete_() {
-			this.$emit('delete')
-		},
-		search() {
-			this.$emit('search', this.input)
+		input(val) {
+			this.$emit('input', val)
 		}
 	}
 }
