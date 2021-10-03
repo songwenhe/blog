@@ -19,7 +19,12 @@ export const aMixin = {
       callback && callback()
     },
     test (val) {
-      console.log(val);
+      console.log('val :>> ', val);
+    },
+    back () {
+      // return 
+      console.log(window.history);
+      return window.history.length > 1 ? this.$router.go(-1) : this.$router.replace('/')
     }
   }
 }

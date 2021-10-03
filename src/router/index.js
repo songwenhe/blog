@@ -70,6 +70,13 @@ export const constantRoutes = [
         meta: { title: '笔记列表', icon: 'dashboard', actvieMenu: '/content/note' }
       },
       {
+        hidden: true,
+        path: 'noteDetail/:id?',
+        name: 'NoteDetail',
+        component: () => import('@/views/content/note/notePage'),
+        props: true,
+      },
+      {
         path: 'category',
         name: 'Category',
         component: () => import('@/views/content/category'),
@@ -87,60 +94,61 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/note',
+    redirect: '/user',
     meta: {
       title: '用户管理', icon: 'el-icon-s-management'
     },
     children: [
       {
-        path: 'note',
-        name: 'Note',
-        component: () => import('@/views/content/note'),
-        meta: { title: '用户列表', icon: 'dashboard', actvieMenu: '/content/note' }
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/user/user'),
+        meta: { title: '用户列表', icon: 'dashboard', actvieMenu: '/user/user' }
       },
       {
-        path: 'category',
-        name: 'Category',
-        component: () => import('@/views/content/category'),
-        meta: { title: '评论管理', icon: 'dashboard', actvieMenu: '/content/category' }
+        path: 'comment',
+        name: 'Comment',
+        component: () => import('@/views/user/comment'),
+        meta: { title: '评论管理', icon: 'dashboard', actvieMenu: '/user/comment' }
       },
       {
-        path: 'tag',
-        name: 'Tag',
-        component: () => import('@/views/content/tag'),
-        meta: { title: '回复管理', icon: 'dashboard', actvieMenu: '/content/tag' }
+        path: 'reply',
+        name: 'Reply',
+        component: () => import('@/views/user/reply'),
+        meta: { title: '回复管理', icon: 'dashboard', actvieMenu: '/user/reply' }
       },
     ]
   },
   {
     path: '/',
     component: Layout,
-    redirect: '/note',
+    redirect: '/config',
     meta: {
       title: '系统管理', icon: 'el-icon-s-management'
     },
     children: [
       {
-        path: 'note',
-        name: 'Note',
-        component: () => import('@/views/content/note'),
-        meta: { title: '系统配置', icon: 'dashboard', actvieMenu: '/content/note' }
+        path: 'config',
+        name: 'Config',
+        component: () => import('@/views/setting/config'),
+        meta: { title: '系统配置', icon: 'dashboard', actvieMenu: '/setting/config' }
       },
       {
-        path: 'category',
-        name: 'Category',
-        component: () => import('@/views/content/category'),
-        meta: { title: '系统日志', icon: 'dashboard', actvieMenu: '/content/category' }
+        path: 'log',
+        name: 'Log',
+        component: () => import('@/views/setting/log'),
+        meta: { title: '系统日志', icon: 'dashboard', actvieMenu: '/setting/log' }
       },
       {
-        path: 'tag',
-        name: 'Tag',
-        component: () => import('@/views/content/tag'),
-        meta: { title: '阿里云OSS', icon: 'dashboard', actvieMenu: '/content/tag' }
+        path: 'oss',
+        name: 'Oss',
+        component: () => import('@/views/setting/oss'),
+        meta: { title: '阿里云OSS', icon: 'dashboard', actvieMenu: '/setting/oss' }
       },
     ]
   },
   // 404 page must be placed at the end !!!
+  { path: '/test', component: () => import('@/views/test') },
   { path: '*', redirect: '/404', hidden: true }
 ]
 

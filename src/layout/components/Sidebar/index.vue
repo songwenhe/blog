@@ -6,7 +6,7 @@
 				:background-color="variables.menuBg" :text-color="variables.menuText"
 				:unique-opened="false" :active-text-color="variables.menuActiveText"
 				:collapse-transition="false" mode="vertical">
-				<sidebar-item v-for="route in routes" :key="route.path" :item="route"
+				<sidebar-item v-for="route in routes" :key="getKey(route)" :item="route"
 					:base-path="route.path" />
 			</el-menu>
 		</el-scrollbar>
@@ -21,6 +21,13 @@ import variables from '@/styles/variables.scss'
 
 export default {
 	components: { SidebarItem, Logo },
+	methods: {
+		getKey(route) {
+			// if
+			// console.log(route.redirect)
+			return route.redirect
+		}
+	},
 	computed: {
 		...mapGetters(['sidebar']),
 		routes() {
@@ -29,6 +36,7 @@ export default {
 		activeMenu() {
 			const route = this.$route
 			const { meta, path } = route
+			console.log(route)
 			// if set path, the sidebar will highlight the path you set
 			if (meta.activeMenu) {
 				return meta.activeMenu

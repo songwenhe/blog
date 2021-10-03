@@ -80,6 +80,9 @@ export default {
 	methods: {
 		handleSelectionChange(e) {
 			console.log(e)
+		},
+		handleAdd() {
+			this.$router.push({ name: 'NoteDetail' })
 		}
 	}
 }

@@ -124,3 +124,21 @@ export function param2Obj (url) {
 export function hashID (length) {
   return Array.from({ length }, () => Math.floor(Math.random() * 36).toString(36)).join('')
 }
+
+export function deepClone (source) {
+  // const type = Object.prototype.toString.call(source).slice(8, -1).toLocaleLowerCase()
+  if (typeof source !== 'object' || source == null) return source
+  let res
+  if (Array.isArray(source)) {
+    res = []
+  } else {
+    res = {}
+  }
+  for (const key in source) {
+    if (Object.hasOwnProperty.call(source, key)) {
+      // const element = object[key];
+      res[key] = deepClone(source[key])
+    }
+  }
+  return res
+}
