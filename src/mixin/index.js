@@ -25,6 +25,9 @@ export const aMixin = {
       // return 
       console.log(window.history);
       return window.history.length > 1 ? this.$router.go(-1) : this.$router.replace('/')
+    },
+    _url (path) {
+      return this.IMG_URL + path
     }
   }
 }

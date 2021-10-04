@@ -6,7 +6,9 @@
 			style="width: 100%" fit highlight-current-row>
 			<el-table-column align="center" label="头像" min-width="95">
 				<template v-slot={row}>
-					{{row.file_url}}
+					<el-avatar shape="square" :size="80" :src="_url(row.fileUrl)"
+						v-if="row.fileUrl"></el-avatar>
+					<el-avatar shape="square" :size="80" v-else></el-avatar>
 				</template>
 			</el-table-column>
 			<el-table-column align="center" label="用户名" min-width="95">
@@ -31,7 +33,7 @@
 					</el-switch>
 				</template>
 			</el-table-column>
-			<el-table-column align="center" label="创建时间" min-width="95">
+			<el-table-column align="center" label="注册时间" min-width="95">
 				<template v-slot={row}>
 					{{row.createTime | formatDate}}
 				</template>
@@ -59,21 +61,23 @@
 		</el-pagination>
 
 		<!-- 分类处理 -->
-		<el-dialog :title="isEdit?'修改':'添加'+'标签'" width="30%"
+		<el-dialog :title="isEdit?'修改':'添加'+'用户'" width="30%"
 			:visible.sync="dialogFormVisible" @close="resetForm('userForm')"
 			:close-on-click-modal="false" class="t-dialog" key="userForm">
-			<el-form :model="userForm" :rules="rules" label-width="80px" ref="userForm">
-				<el-form-item label="用户头像" prop="file_url">
+			<el-form :model="userForm" :hide-required-asterisk="true" status-icon :rules="rules"
+				label-width="80px" ref="userForm">
+				<el-form-item label="用户头像" prop="file_url" v-if="isEdit">
 					<!-- <el-input v-model="userForm.file_url" autocomplete="off"></el-input> -->
-					<!-- <el-upload class="avatar-uploader"
-						action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false"
-						:on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-						<img v-if="imageUrl" :src="imageUrl" class="avatar">
+
+					<el-upload class="avatar-uploader" :action="BASE_URL+'file/uploadFile'"
+						:show-file-list="false" :on-success="handleAvatarSuccess"
+						:before-upload="beforeAvatarUpload" name="files" :data="{owerId:userForm.id}">
+						<img v-if="userForm.fileUrl" :src="_url(userForm.fileUrl)" class="avatar">
 						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-					</el-upload> -->
+					</el-upload>
 				</el-form-item>
-				<el-form-item label="用户名称" prop="userName">
-					<el-input v-model="userForm.userName">
+				<el-form-item label="账号" prop="userName">
+					<el-input v-model="userForm.userName" :readonly="isEdit">
 					</el-input>
 				</el-form-item>
 				<!-- <el-form-item label="用户密码" prop="passWord">
@@ -111,18 +115,27 @@
 
 <script>
 import {
+	API,
 	insertOne,
 	deleteOne,
-	API,
 	getUser,
 	changePassword,
 	editUser
 } from '@/api'
-import { hashID, deepClone } from '@/utils'
+import { hashID, deepClone, validateEmail } from '@/utils'
 import { aMixin } from '@/mixin'
 
 export default {
 	data() {
+		const validEmail = (rule, value, callback) => {
+			if (!value?.trim().length) {
+				callback(new Error('请输入电子邮箱'))
+			} else if (!validateEmail(value)) {
+				callback(new Error('电子邮箱格式错误'))
+			} else {
+				callback()
+			}
+		}
 		return {
 			key: '',
 			list: [],
@@ -130,10 +143,11 @@ export default {
 			dialogFormVisible: false,
 			userForm: {},
 			rules: {
-				name: [{ required: true, message: '请输入标签名称', trigger: 'blur' }]
+				userName: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+				email: [{ validator: validEmail, trigger: 'blur' }],
+				phone: [{ required: true, message: '请输入手机号码', trigger: 'blur' }]
 			},
-			isEdit: false,
-			imageUrl: ''
+			isEdit: false
 		}
 	},
 	mixins: [aMixin],
@@ -144,6 +158,7 @@ export default {
 		handleAdd() {
 			this.isEdit = false
 			this.dialogFormVisible = true
+			this.userForm = {}
 		},
 		async getList() {
 			this.listLoading = true
@@ -166,7 +181,7 @@ export default {
 				.catch(() => {})
 		},
 		async modifyState(state, { id }) {
-			const { success, message } = await editUser(API.USER, {
+			const { success, message } = await editUser({
 				id,
 				state
 			})
@@ -189,13 +204,15 @@ export default {
 				if (this.isEdit === false) {
 					const { success, message } = await insertOne(API.USER, {
 						...this[formName],
-						id: hashID()
+						id: hashID(),
+						createTime: Date.now()
 					})
 					this.dialogFormVisible = false
 					success && this.getList()
 				} else {
-					const { success, message } = await editUser(API.USER, {
-						...this[formName]
+					const { success, message } = await editUser({
+						...this[formName],
+						updateTime: Date.now()
 					})
 					this.dialogFormVisible = false
 					success && this.getList()
@@ -209,20 +226,33 @@ export default {
 				type: 'error'
 			})
 				.then(async () => {
-					const { success } = await changePassword({ id, password: 123456 })
-					this.$message[success ? 'success' : 'error'](message)
+					const { success, message } = await changePassword({
+						id,
+						password: 123456
+					})
+					message && this.$message[success ? 'success' : 'error'](message)
 					// this.getList()
 				})
 				.catch((e) => {
 					console.log(e)
 				})
+		},
+		handleAvatarSuccess(res, file) {
+			// this.fileUrl = res
+			this.$set(this.userForm, 'fileUrl', res)
+		},
+		beforeAvatarUpload(file) {
+			console.log(file)
+			// const isJPG = file.type === 'image/jpeg'
+			// const isLt2M = file.size / 1024 / 1024 < 2
+			// if (!isJPG) {
+			// 	this.$message.error('上传头像图片只能是 JPG 格式!')
+			// }
+			// if (!isLt2M) {
+			// 	this.$message.error('上传头像图片大小不能超过 2MB!')
+			// }
+			// return isJPG && isLt2M
 		}
-	},
-	handleAvatarSuccess(r) {
-		console.log(`r`, r)
-	},
-	beforeAvatarUpload(r) {
-		console.log(`r`, r)
 	}
 }
 </script>

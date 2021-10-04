@@ -49,10 +49,11 @@ export function deleteOne (path, params) {
 /*
   user 
  */
-export function getUser (path) {
+export function getUser (path, params) {
   return request({
     url: `/${path}/pageUser`,
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
@@ -74,9 +75,8 @@ export function changePassword (params) {
 }
 export function login (data) {
   return request({
-    url: '/apiUser/api/login',
+    url: '/apiUser/api/login' + data,
     method: 'post',
-    data
   })
 }
 export function logout (params) {
@@ -87,11 +87,17 @@ export function logout (params) {
   })
 }
 
-export function register (params) {
+/*
+ post
+*/
+export function sendPost () {
+
+}
+export function register (data) {
   return request({
     url: '/apiUser/login',
-    method: 'get',
-    params
+    method: 'post',
+    data
   })
 }
 /*
@@ -105,6 +111,7 @@ export function uploadFile (data) {
     data
   })
 }
+
 export const API = {
   LOG: 'apiLogs',
   REPLY: 'apiReply',

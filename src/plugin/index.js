@@ -3,6 +3,8 @@ import { Message } from 'element-ui';
 const MyPlugins = {}
 
 MyPlugins.install = function (Vue, options) {
+  Vue.prototype.BASE_URL = 'http://120.24.30.105:8088/'
+  Vue.prototype.IMG_URL = 'http://120.24.30.105:8001/'
   Vue.prototype.$message = Message
   Vue.filter('formatDate', (time, cFormat) => {
     const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'

@@ -1,8 +1,4 @@
 /**
- * Created by PanJiaChen on 16/11/18.
- */
-
-/**
  * Parse the time to string
  * @param {(Object|string|number)} time
  * @param {string} cFormat
@@ -115,7 +111,20 @@ export function param2Obj (url) {
   })
   return obj
 }
-
+/**
+ * 
+ * @param {object} obj 
+ * @returns {string}
+ */
+export function obj2Params (obj) {
+  let arr = []
+  for (const key in obj) {
+    if (Object.hasOwnProperty.call(obj, key)) {
+      arr.push(`${key}=${obj[key]}`)
+    }
+  }
+  return arr.length ? '?' + arr.join('&') : ''
+}
 /**
  * @param {number} length 
  * @returns {string}
@@ -124,7 +133,11 @@ export function param2Obj (url) {
 export function hashID (length) {
   return Array.from({ length }, () => Math.floor(Math.random() * 36).toString(36)).join('')
 }
-
+/**
+ * 
+ * @param { any } source 
+ * @returns any
+ */
 export function deepClone (source) {
   // const type = Object.prototype.toString.call(source).slice(8, -1).toLocaleLowerCase()
   if (typeof source !== 'object' || source == null) return source
@@ -141,4 +154,29 @@ export function deepClone (source) {
     }
   }
   return res
+}
+
+export function validatePhone (val) {
+  return /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/.test(val)
+}
+
+export function validateEmail (val) {
+  return /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(val)
+}
+
+export function setVal (key, value) {
+  localStorage.setItem(key, JSON.stringify(value))
+}
+
+export function getVal (key) {
+  const val = localStorage.getItem(key)
+  return val && JSON.parse(val)
+}
+
+export function removeVal (key) {
+  localStorage.removeItem(key)
+}
+
+export function getToken (key) {
+  return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(key).replace(/[-.+*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null
 }

@@ -1,18 +1,16 @@
 <template>
 	<div class="login-container">
 		<el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form"
-			auto-complete="on" label-position="left">
-
+			auto-complete="off" label-position="left" :class="{'toggle':!this.toggle}">
 			<div class="title-container">
-				<h3 class="title">Login Form</h3>
+				<h3 class="title">登录</h3>
 			</div>
-
 			<el-form-item prop="username">
 				<span class="svg-container">
 					<svg-icon icon-class="user" />
 				</span>
-				<el-input ref="username" v-model="loginForm.username" placeholder="Username"
-					name="username" type="text" tabindex="1" auto-complete="on" />
+				<el-input ref="username" v-model="loginForm.username" placeholder="用户名"
+					name="username" type="text" tabindex="1" />
 			</el-form-item>
 
 			<el-form-item prop="password">
@@ -20,56 +18,106 @@
 					<svg-icon icon-class="password" />
 				</span>
 				<el-input :key="passwordType" ref="password" v-model="loginForm.password"
-					:type="passwordType" placeholder="Password" name="password" tabindex="2"
-					auto-complete="on" @keyup.enter.native="handleLogin" />
+					:type="passwordType" placeholder="登录密码" name="password" tabindex="2"
+					@keyup.enter.native="handleLogin('loginForm')" />
 				<span class="show-pwd" @click="showPwd">
 					<svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
 				</span>
 			</el-form-item>
+			<div class="login-btns t-btns">
+				<el-button type="info" @click="toggleBtn" class="login-btn">注册</el-button>
+				<el-button :loading="loading" type="success" class="login-btn"
+					@click.native.prevent="handleLogin('loginForm')">登录</el-button>
 
-			<el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;"
-				@click.native.prevent="handleLogin">Login</el-button>
+			</div>
 
-			<!-- <div class="tips">
-				<span style="margin-right:20px;">username: admin</span>
-				<span> password: any</span>
-			</div> -->
+		</el-form>
+		<el-form ref="registerForm" :model="registerForm" :rules="registerRules"
+			class="login-form" label-position="left" :class="{'toggle':this.toggle}">
+			<div class="title-container">
+				<h3 class="title">注册</h3>
+			</div>
+			<el-form-item prop="username">
+				<span class="svg-container">
+					<svg-icon icon-class="user" />
+				</span>
+				<el-input ref="username" v-model="registerForm.username" placeholder="用户名"
+					name="username" type="text" tabindex="1" />
+			</el-form-item>
 
+			<el-form-item prop="oldPassword">
+				<span class="svg-container">
+					<svg-icon icon-class="password" />
+				</span>
+				<el-input :key="passwordType" ref="password" v-model="registerForm.oldPassword"
+					:type="passwordType" placeholder="新密码" name="password" tabindex="2" />
+				<span class="show-pwd" @click="showPwd">
+					<svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+				</span>
+			</el-form-item>
+			<el-form-item prop="newPassword">
+				<span class="svg-container">
+					<svg-icon icon-class="password" />
+				</span>
+				<el-input :key="passwordType" ref="password" v-model="registerForm.newPassword"
+					:type="passwordType" placeholder="确认密码" name="password" tabindex="2"
+					@keyup.enter.native="handleLogin('registerForm')" />
+				<span class="show-pwd" @click="showPwd">
+					<svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+				</span>
+			</el-form-item>
+			<div class="login-btns t-btns">
+				<el-button type="info" @click="toggleBtn" class="login-btn">登录</el-button>
+				<el-button :loading="loading" type="success" class="login-btn"
+					@click.native.prevent="handleLogin('registerForm')">注册</el-button>
+			</div>
 		</el-form>
 	</div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { register } from '@/api'
+import { mapActions, mapMutations } from 'vuex'
 export default {
 	name: 'Login',
 	data() {
-		const validateUsername = (rule, value, callback) => {
-			if (!validUsername(value)) {
-				callback(new Error('Please enter the correct user name'))
-			} else {
-				callback()
-			}
-		}
-		const validatePassword = (rule, value, callback) => {
-			if (value.length < 6) {
-				callback(new Error('The password can not be less than 6 digits'))
+		const validatePwd = (rule, value, callback) => {
+			console.log(value, this.registerForm.oldPassword)
+			if (value.trim().length === 0) {
+				callback(new Error('请输入确认密码'))
+			} else if (value !== this.registerForm.oldPassword) {
+				callback(new Error('两次输入密码不一致'))
 			} else {
 				callback()
 			}
 		}
 		return {
+			toggle: true,
 			loginForm: {
-				username: 'admin',
-				password: '111111'
+				username: '',
+				password: ''
+			},
+			registerForm: {
+				username: '',
+				oldPassword: '',
+				newPassword: ''
 			},
 			loginRules: {
 				username: [
-					{ required: true, trigger: 'blur', validator: validateUsername }
+					{ required: true, trigger: 'blur', message: '请输入用户名' }
 				],
 				password: [
-					{ required: true, trigger: 'blur', validator: validatePassword }
+					{ required: true, trigger: 'blur', message: '请输入登录密码' }
 				]
+			},
+			registerRules: {
+				username: [
+					{ required: true, trigger: 'blur', message: '请输入用户名' }
+				],
+				oldPassword: [
+					{ required: true, trigger: 'blur', message: '请输入新密码' }
+				],
+				newPassword: [{ validator: validatePwd, trigger: 'blur' }]
 			},
 			loading: false,
 			passwordType: 'password',
@@ -85,18 +133,54 @@ export default {
 		}
 	},
 	methods: {
-		showPwd() {
-			if (this.passwordType === 'password') {
-				this.passwordType = ''
-			} else {
-				this.passwordType = 'password'
-			}
-			this.$nextTick(() => {
-				this.$refs.password.focus()
-			})
+		...mapMutations('user', ['SET_CRTUSER']),
+		...mapActions(['user/login']),
+		toggleBtn() {
+			this.toggle
+				? this.$refs.loginForm.resetFields()
+				: this.$refs.registerForm.resetFields()
+			this.toggle = !this.toggle
+			this.passwordType = 'password'
 		},
-		handleLogin() {
-			this.$router.push({ path: '/home' })
+		showPwd() {
+			this.passwordType = this.passwordType === '' ? 'password' : ''
+			// this.$nextTick(() => {
+			// 	this.$refs.password.focus()
+			// })
+		},
+		handleLogin(formName) {
+			// console.log(this.SET_CRTUSER)
+			// return
+			this.$refs[formName].validate(async (valid) => {
+				if (!valid) return
+				console.log(this[formName])
+				this.loading = true
+				if (formName === 'loginForm') {
+					try {
+						this['user/login'](this[formName]).then(({ success, message }) => {
+							success && this.$router.push({ path: this.redirect || '/' })
+							!success && message && this.$message.error({ message })
+						})
+						this.loading = false
+					} catch (error) {
+						// console.log(error)
+						this.$message.error({ message: error })
+						this.loading = false
+					}
+				} else {
+					const { username: userName, newPassword: passWord } = this[formName]
+					const { data, message, success } = await register({
+						userName,
+						passWord
+					})
+					!success && this.message.success({ message })
+					if (success) {
+						this.toggleBtn()
+						this.$message.success({ message: '注册成功!' })
+					}
+				}
+			})
+			// this.$router.push({ path: '/home' })
 			// this.$router.push({ path: this.redirect || '/' })
 			// this.$refs.loginForm.validate((valid) => {
 			// 	if (valid) {
@@ -173,18 +257,28 @@ $dark_gray: #889aa4;
 $light_gray: #eee;
 
 .login-container {
+	position: relative;
 	min-height: 100%;
 	width: 100%;
 	background-color: $bg;
 	overflow: hidden;
-
+	transform-style: preserve-3d;
+	perspective: 900px;
 	.login-form {
-		position: relative;
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transition: 1s;
+		backface-visibility: hidden;
+		transform: perspective(900px) translateX(-50%);
 		width: 520px;
 		max-width: 100%;
 		padding: 160px 35px 0;
-		margin: 0 auto;
 		overflow: hidden;
+		transform-origin: center;
+		&.toggle {
+			transform: perspective(900px) translateX(-400%);
+		}
 	}
 
 	.tips {
@@ -227,6 +321,17 @@ $light_gray: #eee;
 		color: $dark_gray;
 		cursor: pointer;
 		user-select: none;
+	}
+}
+.login-btns {
+	display: flex;
+
+	.login-btn {
+		width: 100%;
+		margin-right: 0.25rem;
+		&:last-child {
+			margin-right: 0;
+		}
 	}
 }
 </style>

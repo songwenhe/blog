@@ -3,12 +3,14 @@ import { login, logout } from '@/api'
 
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import { getVal, setVal, obj2Params } from '@/utils'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    currentUser: getVal('currentUser')
   }
 }
 
@@ -26,38 +28,40 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_CRTUSER: (state, user) => {
+    state.currentUser = user
+    setVal('currentUser', user)
   }
 }
 
 const actions = {
-  // user login
   login ({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const params = obj2Params(userInfo)
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        console.log(data);
-        // commit('SET_TOKEN', data.token)
-        // setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
+      login(params).then(res => {
+        const { data, message, success } = res
+        if (success) {
+          const token = getToken()
+          commit('SET_TOKEN', token)
+          commit('SET_CRTUSER', data)
+        }
+        resolve({ success, message })
+      }).catch(err => {
+        reject({ success: false, message: err })
       })
     })
   },
-
   // get user info
   getInfo ({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
 
         const { name, avatar } = data
-
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         resolve(data)
@@ -70,7 +74,7 @@ const actions = {
   // user logout
   logout ({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      logout().then(() => {
         removeToken() // must remove  token  first
         resetRouter()
         commit('RESET_STATE')
@@ -97,4 +101,3 @@ export default {
   mutations,
   actions
 }
-

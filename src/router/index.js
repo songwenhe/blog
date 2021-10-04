@@ -56,9 +56,9 @@ export const constantRoutes = [
     }]
   },
   {
-    path: '/',
+    path: '/content',
     component: Layout,
-    redirect: '/note',
+    redirect: '/content/note',
     meta: {
       title: '内容管理', icon: 'el-icon-s-management'
     },
@@ -92,9 +92,9 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/',
+    path: '/user',
     component: Layout,
-    redirect: '/user',
+    redirect: '/user/user',
     meta: {
       title: '用户管理', icon: 'el-icon-s-management'
     },
@@ -120,9 +120,9 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/',
+    path: '/setting',
     component: Layout,
-    redirect: '/config',
+    redirect: '/setting/config',
     meta: {
       title: '系统管理', icon: 'el-icon-s-management'
     },
