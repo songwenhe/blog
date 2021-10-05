@@ -87,12 +87,6 @@ export function logout (params) {
   })
 }
 
-/*
- post
-*/
-export function sendPost () {
-
-}
 export function register (data) {
   return request({
     url: '/apiUser/login',
@@ -100,6 +94,13 @@ export function register (data) {
     data
   })
 }
+/*
+ post
+*/
+export function sendPost () {
+
+}
+
 /*
  * other 
  */

@@ -28,7 +28,7 @@
 			</el-table-column>
 			<el-table-column align="center" label="状态" min-width="95">
 				<template v-slot={row}>
-					<el-switch v-model="row.state" active-text="正常" inactive-text="禁用"
+					<el-switch v-model="row.state" active-text="管理员" inactive-text="普通"
 						:active-value="1" :inactive-value="0" @change="modifyState($event,row)">
 					</el-switch>
 				</template>

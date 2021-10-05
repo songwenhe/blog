@@ -50,7 +50,7 @@ service.interceptors.response.use(
     if (res.success === true) {
       return res
     } else {
-      return Promise.reject(new Error(res.message || 'Error'))
+      return Promise.reject(res.message || 'Error')
     }
     // if the custom code is not 20000, it is judged as an error.
     // if (res.code !== 20000) {

@@ -130,7 +130,7 @@ export function obj2Params (obj) {
  * @returns {string}
  */
 
-export function hashID (length) {
+export function hashID (length = 32) {
   return Array.from({ length }, () => Math.floor(Math.random() * 36).toString(36)).join('')
 }
 /**
@@ -177,6 +177,48 @@ export function removeVal (key) {
   localStorage.removeItem(key)
 }
 
+export function setVals (key, value) {
+  sessionStorage.setItem(key, JSON.stringify(value))
+}
+
+export function getVals (key) {
+  const val = sessionStorage.getItem(key)
+  return val && JSON.parse(val)
+}
+
+export function removeVals (key) {
+  sessionStorage.removeItem(key)
+}
 export function getToken (key) {
   return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(key).replace(/[-.+*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null
+}
+
+/**
+ * 
+ * @param {any} val 
+ * @returns {boolean}
+ */
+export function notEmpty (val) {
+  const types = {
+    STRING: 'string',
+    OBJECT: 'object',
+    NULL: 'null',
+    UNDEFINED: 'undefined',
+    ARRAY: 'array'
+  }
+  const type = Object.prototype.toString.call(val).slice(8, -1).toLocaleLowerCase()
+  switch (type) {
+    case types.STRING:
+    case types.ARRAY:
+      return !!val.length
+    case types.NULL:
+    case types.UNDEFINED:
+      return !!val
+    case types.OBJECT:
+      return !!Object.keys(val).length
+    default:
+      console.log('type :>> ', type);
+      console.log('val :>> ', val);
+      return !!val
+  }
 }

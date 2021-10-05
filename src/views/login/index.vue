@@ -149,24 +149,23 @@ export default {
 			// })
 		},
 		handleLogin(formName) {
-			// console.log(this.SET_CRTUSER)
-			// return
 			this.$refs[formName].validate(async (valid) => {
 				if (!valid) return
 				console.log(this[formName])
 				this.loading = true
 				if (formName === 'loginForm') {
-					try {
-						this['user/login'](this[formName]).then(({ success, message }) => {
-							success && this.$router.push({ path: this.redirect || '/' })
+					this['user/login'](this[formName])
+						.then(({ success, message }) => {
+							// success && this.$router.push({ path: this.redirect || '/' })
+							success && this.$router.push({ path: '/page' })
 							!success && message && this.$message.error({ message })
 						})
-						this.loading = false
-					} catch (error) {
-						// console.log(error)
-						this.$message.error({ message: error })
-						this.loading = false
-					}
+						.catch(({ message }) => {
+							this.$message.error({ message })
+						})
+						.finally(() => {
+							this.loading = false
+						})
 				} else {
 					const { username: userName, newPassword: passWord } = this[formName]
 					const { data, message, success } = await register({
@@ -180,25 +179,6 @@ export default {
 					}
 				}
 			})
-			// this.$router.push({ path: '/home' })
-			// this.$router.push({ path: this.redirect || '/' })
-			// this.$refs.loginForm.validate((valid) => {
-			// 	if (valid) {
-			// 		this.loading = true
-			// 		this.$store
-			// 			.dispatch('user/login', this.loginForm)
-			// 			.then(() => {
-			// 				this.$router.push({ path: this.redirect || '/' })
-			// 				this.loading = false
-			// 			})
-			// 			.catch(() => {
-			// 				this.loading = false
-			// 			})
-			// 	} else {
-			// 		console.log('error submit!!')
-			// 		return false
-			// 	}
-			// })
 		}
 	}
 }

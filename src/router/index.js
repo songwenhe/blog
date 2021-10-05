@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import Page from '@/page'
 // import moduleName from 'module';
 
 /**
@@ -88,6 +89,12 @@ export const constantRoutes = [
         component: () => import('@/views/content/tag'),
         meta: { title: '标签列表', icon: 'dashboard', actvieMenu: '/content/tag' }
       },
+      {
+        path: 'file',
+        name: 'File',
+        component: () => import('@/views/content/file'),
+        meta: { title: '文件列表', icon: 'dashboard', actvieMenu: '/content/file' }
+      },
 
     ]
   },
@@ -146,6 +153,38 @@ export const constantRoutes = [
         meta: { title: '阿里云OSS', icon: 'dashboard', actvieMenu: '/setting/oss' }
       },
     ]
+  },
+  {
+    path: '/page',
+    component: Page,
+    hidden: true,
+    hasPage: true,
+    children: [
+      {
+        path: 'index',
+        name: 'pIndex',
+        component: () => import('@/page/index/index.vue'),
+        meta: { title: '首页', icon: 'dashboard', actvieMenu: '/page/index', page: true }
+      },
+      {
+        path: 'list',
+        name: 'pList',
+        component: () => import('@/page/list'),
+        meta: { title: '分类', icon: 'dashboard', actvieMenu: '/page/list', page: true }
+      },
+      {
+        path: 'tag',
+        name: 'pTag',
+        component: () => import('@/page/tag'),
+        meta: { title: '标签', icon: 'dashboard', actvieMenu: '/page/tag', page: true }
+      },
+      {
+        path: 'music',
+        name: 'pMusic',
+        component: () => import('@/page/music'),
+        meta: { title: '音乐盒', icon: 'dashboard', actvieMenu: '/page/music', page: true }
+      },
+    ],
   },
   // 404 page must be placed at the end !!!
   { path: '/test', component: () => import('@/views/test') },

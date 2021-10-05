@@ -1,11 +1,10 @@
 <template>
 	<div class="table-header">
 		<div class="t-btns" v-if="showLeft">
-			<el-button class="t-btn" type="success" plain icon="el-icon-plus"
-				@click="$emit('add')">
+			<el-button class="t-btn" type="success" icon="el-icon-plus" @click="$emit('add')">
 			</el-button>
-			<el-button class="t-btn" type="danger" plain icon="el-icon-delete"
-				@click="$emit('delete')"> </el-button>
+			<!-- <el-button class="t-btn" type="danger" plain icon="el-icon-delete"
+				@click="$emit('delete')"> </el-button> -->
 		</div>
 		<div class="search" v-if="showRight">
 			<el-input placeholder="请输入内容" :value="value" @input="input" @clear="$emit('clear')"

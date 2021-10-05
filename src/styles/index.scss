@@ -21,6 +21,11 @@ html {
   box-sizing: border-box;
 }
 
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
 #app {
   height: 100%;
 }
@@ -129,12 +134,6 @@ div:focus {
   }
 }
 
-.el-input {
-  .el-input__suffix {
-    top: 5px;
-  }
-}
-
 .t-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -145,15 +144,17 @@ div:focus {
   width: 100%;
 }
 
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
+.avatar-uploader {
+  .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    &:hover {
+      border-color: #409eff;
+    }
+  }
 }
 .avatar-uploader-icon {
   font-size: 28px;
@@ -167,4 +168,67 @@ div:focus {
   width: 8.75rem;
   height: 8.75rem;
   display: block;
+}
+
+.w {
+  width: 1200px;
+  margin: 0 auto !important;
+  height: 100%;
+}
+
+// todo loop
+.ribbon {
+  content: "";
+  padding: 0 1.5rem;
+  height: 1.5rem;
+  text-align: center;
+  line-height: 1.5rem;
+  margin-left: -1.2rem;
+  margin-top: 0.5rem;
+  background-color: $main-blue;
+  border-radius: 2px;
+  top: 0;
+  left: 0;
+  font-size: 0.875rem;
+  color: #fff;
+  position: absolute;
+  z-index: 99;
+  &::before {
+    position: absolute;
+    bottom: -1.2rem;
+    left: 0;
+    content: "";
+    /* background-color: transparent; */
+    border: solid transparent;
+    border-width: 0 1.2rem 1.2rem 0;
+    border-right-color: $main-blue-dark;
+  }
+  &.red {
+    background-color: $main-red;
+    &::before {
+      border-right-color: $main-red-dark;
+    }
+  }
+  &.green {
+    background-color: $main-green;
+    &::before {
+      border-right-color: $main-green-dark;
+    }
+  }
+  &.white {
+    background-color: $main-white;
+    &::before {
+      border-right-color: $main-white-dark;
+    }
+  }
+  &.black {
+    background-color: $main-black;
+    &::before {
+      border-right-color: $main-black-dark;
+    }
+  }
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
