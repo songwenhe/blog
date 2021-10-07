@@ -3,8 +3,8 @@
 		<div class="w">
 			<nav class="nav">
 				<ul class="nav-list">
-					<router-link :to="{name:i.name}" class="nav-item" tag="li" v-for="i in myNav"
-						:key="i.meta.activeMenu">
+					<router-link :to="{name:i.name}" class="nav-item" tag="li"
+						v-for="(i,idx) in myNav" :key="idx">
 						{{i.meta.title}}
 					</router-link>
 
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { notEmpty } from '@/utils'
 export default {
 	data() {
 		return {
@@ -25,7 +26,9 @@ export default {
 	},
 	computed: {
 		myNav() {
-			return this.$router.options.routes.filter((i) => i.hasPage)[0].children
+			const nav = this.$router.options.routes.filter((i) => i.hasPage)[0]
+				.children
+			return nav.filter((i) => notEmpty(i.meta?.title))
 		}
 	},
 	mounted() {

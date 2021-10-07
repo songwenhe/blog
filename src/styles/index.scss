@@ -187,6 +187,7 @@ div:focus {
   margin-top: 0.5rem;
   background-color: $main-blue;
   border-radius: 2px;
+  border-color: $main-blue-dark;
   top: 0;
   left: 0;
   font-size: 0.875rem;
@@ -198,34 +199,25 @@ div:focus {
     bottom: -1.2rem;
     left: 0;
     content: "";
-    /* background-color: transparent; */
     border: solid transparent;
     border-width: 0 1.2rem 1.2rem 0;
-    border-right-color: $main-blue-dark;
+    border-right-color: inherit;
   }
   &.red {
     background-color: $main-red;
-    &::before {
-      border-right-color: $main-red-dark;
-    }
+    border-color: $main-red-dark;
   }
   &.green {
     background-color: $main-green;
-    &::before {
-      border-right-color: $main-green-dark;
-    }
+    border-color: $main-green-dark;
   }
   &.white {
     background-color: $main-white;
-    &::before {
-      border-right-color: $main-white-dark;
-    }
+    border-color: $main-white-dark;
   }
   &.black {
     background-color: $main-black;
-    &::before {
-      border-right-color: $main-black-dark;
-    }
+    border-color: $main-black-dark;
   }
 }
 

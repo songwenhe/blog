@@ -1,61 +1,31 @@
 <template>
 	<div class="index">
-		<el-row :gutter="60" class="container w">
+		<el-row :gutter="60" class="w">
 			<el-col :span="18" class="list">
-				<div class="item" v-for="i in 6">
+				<div class="item" v-for="i in list" :key="i.id">
 					<div class="cover">
 						<span class="ribbon">原理</span>
-						<img src="http://placeimg.com/640/480/cats" alt="" class="img">
+						<!-- <img src="http://placeimg.com/640/480/cats" alt="" class="img"> -->
+						<img :src="_url(i.coverImage)" alt="" class="img"
+							onerror="this.src='http://placeimg.com/640/480/cats'">
 					</div>
 					<div class="info">
-						<div class="title">啊实打实大苏打</div>
-						<div class="desc">啊实打实打算</div>
+						<div class="title">{{i.title}}</div>
+						<div class="desc">{{i.title}}</div>
 						<div class="other">
-							<div class="date"><i class="fa fa-clock-o"></i>2021-05-11</div>
-							<div class="view"><i class="fa fa-eye"></i>浏览(56)</div>
-							<div class="comment"><i class="fa fa-commenting-o"></i>评论(0)</div>
+							<div class="date"><i class="fa fa-clock-o"></i>{{i.createTime}}</div>
+							<div class="view"><i class="fa fa-eye"></i>浏览({{i.view || 0}})</div>
+							<div class="comment"><i
+									class="fa fa-commenting-o"></i>评论({{i.replyNum || 0}})
+							</div>
 						</div>
 					</div>
 					<div class="btns">
-						<button class="btn">查看笔记</button>
+						<button class="btn" @click="gotoDetail(i)">查看笔记</button>
 					</div>
 				</div>
 			</el-col>
 			<el-col :span="6">
-				<!-- <div class="aside">
-					<myCard title="关于我" icon="fa-user">
-						<div class="about">
-							<div class="qr-code">
-								<img src="http://placeimg.com/640/480/abstract" alt="">
-							</div>
-							<div class="author">
-								nihao123
-							</div>
-							<div class="link">
-								<i class="fa fa-weixin"></i>
-								<i class="fa fa-qq"></i>
-								<i class="fa fa-weibo"></i>
-								<i class="fa fa-github"></i>
-							</div>
-						</div>
-					</myCard>
-					<myCard title="标签云" icon="fa-tag">
-						<div class="tag">
-							<a href="javascript:;" v-for="i in 12" class="tag-link">html</a>
-						</div>
-					</myCard>
-					<myCard title="近期评论" icon="fa-comment">
-						<ul class="comment">
-							<li class="comment-item" v-for="i in 8">
-								<img src="http://placeimg.com/640/480/nightlife" alt="" class="img">
-								<span class="author">admin :</span>
-								<span class="text">大家好</span>
-							</li>
-						</ul>
-					</myCard>
-					<myCard title="近期笔记" icon="fa-book"></myCard>
-					<myCard title="网站信息" icon="fa-info"></myCard>
-				</div> -->
 				<Asider></Asider>
 			</el-col>
 		</el-row>
@@ -63,24 +33,44 @@
 </template>
 
 <script>
-// import myCard from '@/page/components/myCard.vue'
 import Asider from '@/page/components/asider.vue'
+import { API, getPageList } from '@/api'
+import { aMixin } from '@/mixin'
+import { mapMutations } from 'vuex'
+import * as type from '@/store/mutation_types'
 export default {
+	mixins: [aMixin],
 	data() {
-		return {}
+		return {
+			list: []
+		}
 	},
 	components: {
 		Asider
+	},
+	mounted() {
+		this.getList()
+	},
+
+	methods: {
+		...mapMutations('post', [type.SET_CURRENT_POST]),
+		async getList() {
+			const { total, list } = await getPageList(API.NOTE, this.query)
+			this.total = total
+			this.list = list
+			console.log(this.list)
+		},
+		gotoDetail(i) {
+			this[type.SET_CURRENT_POST](i)
+			this.$router.push({ name: 'pArticle', params: { id: i.id } })
+		}
 	}
 }
 </script>
 
 <style lang="scss" scoped>
 .index {
-	height: 100%;
-}
-.container {
-	padding: 1.25rem 0;
+	@include base_layout;
 	.list {
 		height: 100%;
 		/* background-color: #fff; */
@@ -91,7 +81,7 @@ export default {
 			margin-bottom: 1.25rem;
 			display: flex;
 			border-radius: 0.125rem;
-			box-shadow: 1px 2px 2px 2px #0002;
+			@include box_shadow; /* box-shadow: 1px 2px 2px 2px #0002; */
 			.cover {
 				padding: 0.625rem;
 				.img {

@@ -184,6 +184,18 @@ export const constantRoutes = [
         component: () => import('@/page/music'),
         meta: { title: '音乐盒', icon: 'dashboard', actvieMenu: '/page/music', page: true }
       },
+      {
+        path: 'article/:id',
+        name: 'pArticle',
+        component: () => import('@/page/article'),
+        meta: { page: true }
+      },
+      {
+        path: 'search/:id',
+        name: 'pSearch',
+        component: () => import('@/page/search'),
+        meta: { page: true }
+      },
     ],
   },
   // 404 page must be placed at the end !!!
