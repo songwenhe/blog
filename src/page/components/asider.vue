@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="asider">
 		<myCard title="关于我" icon="fa-user">
 			<div class="about">
 				<div class="qr-code">
@@ -15,6 +15,12 @@
 					<i class="fa fa-github"></i>
 				</div>
 			</div>
+		</myCard>
+		<myCard title="目录" icon="fa-book" class="toc-card" v-if="notEmpty(toc)">
+			<ul class="toc">
+				<li class="toc-item" v-for="i in toc" :key="i.id"><a :href="'#'+i.id"
+						class="link">{{i.text}}</a></li>
+			</ul>
 		</myCard>
 		<myCard title="标签云" icon="fa-tag">
 			<div class="tag">
@@ -37,12 +43,17 @@
 
 <script>
 import myCard from '@/page/components/myCard.vue'
+import { notEmpty } from '@/utils'
 export default {
+	props: ['toc'],
 	data() {
 		return {}
 	},
 	components: {
 		myCard
+	},
+	methods: {
+		notEmpty
 	}
 }
 </script>
@@ -148,6 +159,11 @@ export default {
 				color: $main-grey-dark;
 			}
 		}
+	}
+	&.toc-card {
+		position: sticky;
+		top: 1rem;
+		z-index: 999;
 	}
 }
 </style>

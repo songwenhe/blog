@@ -1,5 +1,7 @@
 
 import { Message } from 'element-ui';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/androidstudio.css';
 const MyPlugins = {}
 
 MyPlugins.install = function (Vue, options) {
@@ -26,5 +28,14 @@ MyPlugins.install = function (Vue, options) {
     })
     return time_str
   })
+  Vue.directive('hljs', {
+    inserted (el) {
+      let blocks = el.querySelectorAll('pre code');
+      blocks.forEach((block) => {
+        hljs.highlightBlock(block)
+      })
+
+    }
+  });
 }
 export default MyPlugins
