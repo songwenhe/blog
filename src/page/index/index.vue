@@ -2,28 +2,7 @@
 	<div class="index">
 		<el-row :gutter="60" class="w">
 			<el-col :span="18" class="list">
-				<div class="item" v-for="i in list" :key="i.id">
-					<div class="cover">
-						<span class="ribbon">原理</span>
-						<!-- <img src="http://placeimg.com/640/480/cats" alt="" class="img"> -->
-						<img :src="_url(i.coverImage)" alt="" class="img"
-							onerror="this.src='http://placeimg.com/640/480/cats'">
-					</div>
-					<div class="info">
-						<div class="title">{{i.title}}</div>
-						<div class="desc">{{i.title}}</div>
-						<div class="other">
-							<div class="date"><i class="fa fa-clock-o"></i>{{i.createTime}}</div>
-							<div class="view"><i class="fa fa-eye"></i>浏览({{i.view || 0}})</div>
-							<div class="comment"><i
-									class="fa fa-commenting-o"></i>评论({{i.replyNum || 0}})
-							</div>
-						</div>
-					</div>
-					<div class="btns">
-						<button class="btn" @click="gotoDetail(i)">查看笔记</button>
-					</div>
-				</div>
+				<postList :list="list" @handle="gotoDetail"></postList>
 			</el-col>
 			<el-col :span="6">
 				<Asider></Asider>
@@ -38,6 +17,7 @@ import { API, getPageList } from '@/api'
 import { aMixin } from '@/mixin'
 import { mapMutations } from 'vuex'
 import * as type from '@/store/mutation_types'
+import postList from '@/page/components/postList.vue'
 export default {
 	mixins: [aMixin],
 	data() {
@@ -46,7 +26,8 @@ export default {
 		}
 	},
 	components: {
-		Asider
+		Asider,
+		postList
 	},
 	mounted() {
 		this.getList()
@@ -71,76 +52,6 @@ export default {
 <style lang="scss" scoped>
 .index {
 	@include base_layout;
-	.list {
-		height: 100%;
-		/* background-color: #fff; */
-		.item {
-			position: relative;
-			padding: 1rem;
-			background-color: #fff;
-			margin-bottom: 1.25rem;
-			display: flex;
-			border-radius: 0.125rem;
-			@include box_shadow; /* box-shadow: 1px 2px 2px 2px #0002; */
-			.cover {
-				padding: 0.625rem;
-				.img {
-					min-width: 6rem;
-					height: 6rem;
-					overflow: hidden;
-					&:hover {
-						transform: scale(1.05);
-					}
-				}
-			}
-			.info {
-				flex: 1;
-				display: flex;
-				flex-direction: column;
-				justify-content: space-around;
-				padding-left: 1rem;
-				.title {
-					color: #303030;
-					font-size: 1.4rem;
-					/* font-weight: 700; */
-				}
-				.desc {
-					font-size: 1rem;
-					color: #808080;
-				}
-				.other {
-					display: flex;
-					& > div {
-						color: #a0a0a0;
-						margin-right: 10px;
-						font-size: 0.875rem;
-					}
-					.fa {
-						margin-right: 0.2rem;
-					}
-				}
-			}
-			.btns {
-				display: flex;
-				align-items: flex-end;
-				/* justify-content: flex-end; */
-				.btn {
-					cursor: pointer;
-					width: 6.25rem;
-					height: 1.875rem;
-					border: 1px solid $main-blue;
-					/* border-radius: 0.375rem; */
-					background-color: transparent;
-					color: $main-blue-dark;
-					transition: all 0.5;
-					&:hover {
-						color: #fff;
-						background-color: $main-blue;
-					}
-				}
-			}
-		}
-	}
 	.aside {
 		height: 100%;
 		/* background-color: #fff; */

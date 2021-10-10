@@ -46,3 +46,13 @@
     margin-right: 0.2rem;
   }
 }
+
+@mixin icon_base {
+  color: #a0a0a0;
+  font-size: 0.875rem;
+  .fa {
+    &::before {
+      margin-right: 0.15rem;
+    }
+  }
+}

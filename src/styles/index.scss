@@ -224,3 +224,25 @@ div:focus {
 ::-webkit-scrollbar {
   display: none;
 }
+
+[class*="fa-"] {
+  &::before {
+    margin-right: 0.15rem;
+  }
+}
+
+.link {
+  color: $main-blue-dark;
+  cursor: pointer;
+}
+
+.el-dropdown-menu {
+  padding: 4px 10px;
+  .el-dropdown-menu__item:focus,
+  .el-dropdown-menu__item:not(.is-disabled):hover {
+    background-color: transparent;
+    .router-link-active {
+      color: indianred;
+    }
+  }
+}

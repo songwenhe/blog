@@ -164,25 +164,27 @@ export const constantRoutes = [
         path: 'index',
         name: 'pIndex',
         component: () => import('@/page/index/index.vue'),
+        show: true,
         meta: { title: '首页', icon: 'dashboard', actvieMenu: '/page/index', page: true }
-      },
-      {
-        path: 'list',
-        name: 'pList',
-        component: () => import('@/page/list'),
-        meta: { title: '分类', icon: 'dashboard', actvieMenu: '/page/list', page: true }
-      },
-      {
-        path: 'tag',
-        name: 'pTag',
-        component: () => import('@/page/tag'),
-        meta: { title: '标签', icon: 'dashboard', actvieMenu: '/page/tag', page: true }
       },
       {
         path: 'music',
         name: 'pMusic',
         component: () => import('@/page/music'),
+        show: true,
         meta: { title: '音乐盒', icon: 'dashboard', actvieMenu: '/page/music', page: true }
+      },
+      {
+        path: 'list/:id',
+        name: 'pList',
+        component: () => import('@/page/list'),
+        meta: { title: '分类', icon: 'dashboard', actvieMenu: '/page/list', page: true }
+      },
+      {
+        path: 'tag/:id',
+        name: 'pTag',
+        component: () => import('@/page/tag'),
+        meta: { title: '标签', icon: 'dashboard', actvieMenu: '/page/tag', page: true }
       },
       {
         path: 'article/:id',

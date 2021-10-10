@@ -1,5 +1,5 @@
 <template>
-	<div class="my-card">
+	<div class="my-card" :class="{'shadow':shadow}">
 		<div class="my-card-title">
 			<i class="fa icon" :class="icon"></i>
 			<span class="text">{{title}}</span>
@@ -14,7 +14,8 @@
 export default {
 	props: {
 		icon: { type: String, default: 'fa-car' },
-		title: { type: String, default: '暂无' }
+		title: { type: String, default: '暂无' },
+		shadow: { type: Boolean, default: true }
 	}
 }
 </script>
@@ -24,7 +25,9 @@ export default {
 	padding: 0 0.625rem 0.625rem;
 	background-color: #fff;
 	border-radius: 4px;
-	box-shadow: 1px 1px 4px 1px #0003;
+	&.shadow {
+		box-shadow: 1px 1px 4px 1px #0003;
+	}
 	&-title {
 		height: 1.875rem;
 		/* line-height: 1.875rem; */
@@ -33,11 +36,11 @@ export default {
 		border-bottom: 1px solid #f0f0f0;
 		.icon {
 			border-right: 1px solid #e0e0e0;
-			padding-right: 0.5rem;
+			padding-right: 0.3rem;
 			color: $main-grey-dark;
 		}
 		.text {
-			color: #999;
+			color: $main-black;
 			padding-left: 0.5rem;
 		}
 	}

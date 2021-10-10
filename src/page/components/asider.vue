@@ -18,8 +18,8 @@
 		</myCard>
 		<myCard title="目录" icon="fa-book" class="toc-card" v-if="notEmpty(toc)">
 			<ul class="toc">
-				<li class="toc-item" v-for="i in toc" :key="i.id"><a :href="'#'+i.id"
-						class="link">{{i.text}}</a></li>
+				<li class="toc-item" v-for="i in toc" :key="i.id"><a href="javascript:;"
+						class="link" @click="achor(i)">{{i.text}}</a></li>
 			</ul>
 		</myCard>
 		<myCard title="标签云" icon="fa-tag">
@@ -52,8 +52,23 @@ export default {
 	components: {
 		myCard
 	},
+	mounted() {
+		window.addEventListener('scroll', function (e) {
+			// console.log(e)
+			// let t = document.body.scrollTop() // 目前监听的是整个body的滚动条距离
+			// if (t > 0) {
+			// 	$('.box').addClass('box-active')
+			// } else {
+			// 	$('.box').removeClass('box-active')
+			// }
+		})
+	},
 	methods: {
-		notEmpty
+		notEmpty,
+		achor(el) {
+			const element = document.getElementById(el.id)
+			element.scrollIntoView({ behavior: 'smooth' })
+		}
 	}
 }
 </script>
@@ -164,6 +179,13 @@ export default {
 		position: sticky;
 		top: 1rem;
 		z-index: 999;
+		.toc {
+			.toc-item {
+				padding: 6px 0;
+			}
+		}
 	}
 }
 </style>
+
+
