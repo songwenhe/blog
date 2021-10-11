@@ -237,12 +237,18 @@ div:focus {
 }
 
 .el-dropdown-menu {
-  padding: 4px 10px;
-  .el-dropdown-menu__item:focus,
-  .el-dropdown-menu__item:not(.is-disabled):hover {
-    background-color: transparent;
-    .router-link-active {
+  font-size: 1rem;
+  .dropdown-item {
+    padding: 0 0.8rem;
+    &:hover {
+      background-color: transparent;
       color: indianred;
+    }
+    .dropdown-text {
+      font-size: 0.875rem;
+      &::before {
+        margin-right: 0.3em;
+      }
     }
   }
 }

@@ -32,7 +32,7 @@ MyPlugins.install = function (Vue, options) {
     inserted (el) {
       let blocks = el.querySelectorAll('pre code');
       blocks.forEach((block) => {
-        hljs.highlightBlock(block)
+        hljs.highlightElement(block)
       })
 
     }

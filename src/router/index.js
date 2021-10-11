@@ -165,26 +165,34 @@ export const constantRoutes = [
         name: 'pIndex',
         component: () => import('@/page/index/index.vue'),
         show: true,
-        meta: { title: '首页', icon: 'dashboard', actvieMenu: '/page/index', page: true }
+        meta: { title: '首页', icon: 'fa-ravelry', actvieMenu: '/page/index', page: true }
+      },
+      {
+        path: 'pay',
+        name: 'pPay',
+        component: () => import('@/page/pay'),
+        show: true,
+        meta: { title: '付费专区', icon: 'fa-paypal', actvieMenu: '/page/pay', page: true }
       },
       {
         path: 'music',
         name: 'pMusic',
         component: () => import('@/page/music'),
         show: true,
-        meta: { title: '音乐盒', icon: 'dashboard', actvieMenu: '/page/music', page: true }
+        meta: { title: '音乐盒', icon: 'fa-music', actvieMenu: '/page/music', page: true }
       },
+
       {
         path: 'list/:id',
         name: 'pList',
         component: () => import('@/page/list'),
-        meta: { title: '分类', icon: 'dashboard', actvieMenu: '/page/list', page: true }
+        meta: { page: true }
       },
       {
         path: 'tag/:id',
         name: 'pTag',
         component: () => import('@/page/tag'),
-        meta: { title: '标签', icon: 'dashboard', actvieMenu: '/page/tag', page: true }
+        meta: { page: true }
       },
       {
         path: 'article/:id',

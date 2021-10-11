@@ -1,16 +1,18 @@
 // import { login, logout, getInfo } from '@/api/user'
-import { login, logout } from '@/api'
+import { login, logout, API, getAllList } from '@/api'
 
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import { getVal, setVal, obj2Params } from '@/utils'
+import * as type from '../mutation_types'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
     avatar: '',
-    currentUser: getVal('currentUser')
+    currentUser: getVal('currentUser'),
+    userlist: []
   }
 }
 
@@ -32,6 +34,9 @@ const mutations = {
   SET_CRTUSER: (state, user) => {
     state.currentUser = user
     setVal('currentUser', user)
+  },
+  [type.SET_USER]: (state, data) => {
+    state.userlist = data
   }
 }
 
@@ -78,6 +83,17 @@ const actions = {
         removeToken() // must remove  token  first
         resetRouter()
         commit('RESET_STATE')
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  [type.FETCH_USER] ({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      getAllList(API.USER).then(res => {
+        commit(type.SET_USER, res.data)
         resolve()
       }).catch(error => {
         reject(error)

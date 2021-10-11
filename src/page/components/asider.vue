@@ -24,7 +24,9 @@
 		</myCard>
 		<myCard title="标签云" icon="fa-tag">
 			<div class="tag">
-				<a href="javascript:;" v-for="i in 12" class="tag-link">html</a>
+				<router-link :to="{name:'pTag',params:{id:i.id}}" v-for="i in tagList" :key="i.id"
+					class="tag-link">{{i.name}}
+				</router-link>
 			</div>
 		</myCard>
 		<myCard title="近期评论" icon="fa-comment">
@@ -44,30 +46,39 @@
 <script>
 import myCard from '@/page/components/myCard.vue'
 import { notEmpty } from '@/utils'
+import { API, getAllList } from '@/api'
 export default {
 	props: ['toc'],
 	data() {
-		return {}
+		return {
+			tagList: []
+		}
 	},
 	components: {
 		myCard
 	},
 	mounted() {
-		window.addEventListener('scroll', function (e) {
-			// console.log(e)
-			// let t = document.body.scrollTop() // 目前监听的是整个body的滚动条距离
-			// if (t > 0) {
-			// 	$('.box').addClass('box-active')
-			// } else {
-			// 	$('.box').removeClass('box-active')
-			// }
-		})
+		this.getTagList()
+		// window.addEventListener('scroll', function (e) {
+		// console.log(e)
+		// let t = document.body.scrollTop() // 目前监听的是整个body的滚动条距离
+		// if (t > 0) {
+		// 	$('.box').addClass('box-active')
+		// } else {
+		// 	$('.box').removeClass('box-active')
+		// }
+		// })
 	},
 	methods: {
 		notEmpty,
 		achor(el) {
 			const element = document.getElementById(el.id)
 			element.scrollIntoView({ behavior: 'smooth' })
+		},
+		async getTagList() {
+			const { data } = await getAllList(API.TAG)
+			// console.log(res)
+			this.tagList = data
 		}
 	}
 }
@@ -140,9 +151,7 @@ export default {
 			padding: 0.25rem 0.5rem;
 			font-weight: 700;
 			color: $main-green-dark;
-			border: 1px solid transparent;
-			border-left: 0;
-			border-right: 0;
+			border-bottom: 1px solid transparent;
 			transition: all 0.5 linear;
 			&:hover {
 				color: $main-green;

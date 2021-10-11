@@ -3,8 +3,9 @@
 		<div class="w">
 			<nav class="nav">
 				<ul class="nav-list">
-					<router-link :to="{name:i.name}" class="nav-item" tag="li"
-						v-for="(i,idx) in myNav" :key="idx">
+					<router-link :to="{name:i.name}" class="nav-item fa"
+						:class="['nav-item_'+i.name,i.meta.icon]" tag="li" v-for="(i,idx) in myNav"
+						:key="idx">
 						{{i.meta.title}}
 					</router-link>
 
@@ -20,9 +21,10 @@
 										class="el-icon-arrow-down el-icon--right"></i>
 								</span>
 								<el-dropdown-menu slot="dropdown">
-									<el-dropdown-item v-for="j in i.children" :key="j.id">
+									<el-dropdown-item v-for="j in i.children" :key="j.id"
+										class="dropdown-item">
 										<router-link :to="{name:'pList',params:{id:i.id}}" tag="li">
-											<span class="fa" :class="j.icon">{{j.name}}</span>
+											<span class="fa dropdown-text" :class="j.icon">{{j.name}}</span>
 										</router-link>
 									</el-dropdown-item>
 								</el-dropdown-menu>
@@ -100,6 +102,7 @@ export default {
 		.nav-list {
 			display: flex;
 			height: 100%;
+			/* .nav-item_ */
 			::v-deep.nav-item {
 				min-width: 6.25rem;
 				cursor: pointer;
@@ -117,15 +120,19 @@ export default {
 				&.router-link-active {
 					border-color: indianred;
 				}
-				.el-dropdown {
-					font-size: 1rem;
-					&:hover {
-						color: indianred;
-					}
-				}
 				.fa {
 					margin-right: 0.2rem;
 				}
+				.el-dropdown-link {
+					font-size: 1rem;
+					color: #000;
+				}
+			}
+			.nav-item_pIndex {
+				order: -1;
+			}
+			.nav-item_pMusic {
+				order: 1;
 			}
 		}
 	}

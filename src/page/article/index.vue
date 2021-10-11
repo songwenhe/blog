@@ -62,31 +62,44 @@
 					<myCard :shadow="false" title="评论" class="comment" icon="fa-commenting-o">
 						<commentBox v-model="comment" />
 						<div class="comment-list">
-							<h3 class="comment-title">全部评论 (0)</h3>
-							<div class="comment-item" v-for="i in 4">
+							<h3 class="comment-title">全部评论 ({{commentList.length}})</h3>
+							<div class="comment-item" v-for="i in commentList" :key="i.id">
 								<div class="header">
 									<img src="http://placeimg.com/640/480/sports" alt="">
 									<div class="info">
 										<span class="author">匿名</span><span
-											class="date fa fa-clock-o">{{Date.now() | formatDate}}</span>
+											class="date fa fa-clock-o">{{i.createTime | formatDate}}</span>
 									</div>
 								</div>
 								<div class="content">
 									<div v-if="true" class="reply">
 										<!-- 123 -->
-										<span class="reply-author link">
+										<!-- <span class="reply-author link">
 											@你好
-										</span>
+										</span> -->
 										<p class="reply-content fa">
 											123132132
 										</p>
+										<ul class="reply-list">
+											<li class="reply-item" v-for="i in 1">
+												<div class="reply-header">
+													<div class="img-box">
+														<img src="http://placeimg.com/640/480/technics" alt="">
+													</div>
+													<span class="author">哈哈</span>
+													<span
+														class="date fa fa-clock-o">{{Date.now() | formatDate}}</span>
+												</div>
+												<div class="reply-text">兄弟们，卷起来！</div>
+											</li>
+										</ul>
 									</div>
 								</div>
 								<div class="footer">
 									<span class="fa fa-thumbs-o-up">赞(0)</span>
 									<span class="fa fa-reply" @click="setCurrent(i)">回复</span>
 								</div>
-								<commentBox v-if="current === i" v-model="reply" />
+								<commentBox v-if="current === i" v-model="reply" :isReply="true" />
 							</div>
 						</div>
 					</myCard>
@@ -101,9 +114,11 @@
 
 <script>
 import Asider from '@/page/components/asider.vue'
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import myCard from '../components/myCard'
 import commentBox from '../components/commentBox'
+import { API, getAllList } from '@/api'
+import * as type from '@/store/mutation_types'
 export default {
 	data() {
 		return {
@@ -111,7 +126,8 @@ export default {
 			show: false,
 			comment: '',
 			current: '',
-			reply: ''
+			reply: '',
+			commentList: []
 		}
 	},
 	components: {
@@ -120,16 +136,38 @@ export default {
 		commentBox
 	},
 	methods: {
+		...mapActions({
+			[type.FETCH_USER]: `user/${type.FETCH_USER}`,
+			[type.FETCH_TYPE]: `post/${type.FETCH_TYPE}`
+		}),
 		setCurrent(i) {
 			// console.log(i)
 			this.current = i
+		},
+		async getComment() {
+			const { data } = await getAllList(API.COMMENT)
+			data.map((i) => {
+				const author = this.getUserById(i.userId)
+				return { ...i, author }
+			})
+			this.commentList = data
+			// console.log('userlist', this.userlist)
+			// console.log('currentUser', this.currentUser)
+		},
+		getUserById(id) {
+			return this.userlist.find((i) => i.id === id)
+		},
+		getNoteTypeById(id) {
+			return this.noteTypeList.find((i) => i.id)
 		}
 	},
-	mounted() {},
 	computed: {
-		...mapGetters(['currentPost'])
+		...mapGetters(['currentPost', 'userlist', 'currentUser', 'types'])
 	},
 	mounted() {
+		this.getComment()
+		this[type.FETCH_USER]()
+		this[type.FETCH_TYPE]()
 		const headList = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
 		const h = [...this.$refs.html.childNodes].filter((i) =>
 			headList.includes(i.localName)
@@ -347,8 +385,9 @@ export default {
 						.header {
 							display: flex;
 							& > img {
-								width: auto;
-								height: 2.5rem;
+								width: 3rem;
+								height: 3rem;
+								border-radius: 50%;
 							}
 							.info {
 								@include icon_base;
@@ -356,22 +395,24 @@ export default {
 								display: flex;
 								flex-direction: column;
 								justify-content: space-between;
+
 								.author {
+									font-size: 1rem;
 									color: $main-blue-dark;
 									/* cursor: pointer; */
 								}
 							}
 						}
 						.content {
-							padding: 1rem 0.5rem 0;
+							/* padding-top: 1rem; */
 							.reply {
 								display: flex;
 								flex-direction: column;
 								.reply-content {
+									margin: 0;
 									padding: 1rem;
 									color: #666;
 									font-size: 0.875rem;
-									background-color: #f5f5f5;
 									&::before {
 										font-size: 0.875rem;
 										color: $main-black-dark;
@@ -381,6 +422,38 @@ export default {
 										font-size: 0.875rem;
 										color: $main-black-dark;
 										content: '\f10e';
+									}
+								}
+								.reply-list {
+									padding: 0 0 1rem;
+									.reply-item {
+										padding: 0.625rem;
+										display: flex;
+										flex-direction: column;
+										flex-wrap: wrap;
+										background-color: #f5f5f5;
+
+										.reply-header {
+											display: flex;
+											align-items: center;
+											color: #666;
+											font-size: 0.875rem;
+											.img-box {
+												img {
+													border-radius: 50%;
+													width: 30px;
+													height: 30px;
+												}
+											}
+											.author {
+												color: $main-blue-dark;
+												font-size: 1rem;
+												padding: 0 0.5rem;
+											}
+										}
+										.reply-text {
+											padding: 0.5rem 0;
+										}
 									}
 								}
 							}

@@ -3,7 +3,8 @@
 		<el-input type="textarea" :autosize="autosize" :value="value" resize="none"
 			class="comment-editor" @input="input">
 		</el-input>
-		<button class="comment-button">提交评论</button>
+		<button class="comment-button"
+			:class="isReply&&'reply'">{{isReply?'回复':'评论'}}</button>
 	</div>
 </template>
 
@@ -17,6 +18,10 @@ export default {
 		isReply: {
 			type: Boolean,
 			default: false
+		},
+		text: {
+			type: String,
+			default: '评论'
 		}
 	},
 	data() {
@@ -28,9 +33,7 @@ export default {
 
 	computed: {
 		autosize() {
-			return this.isReply
-				? { minRows: 1, maxRows: 2 }
-				: { minRows: 3, maxRows: 4 }
+			return { minRows: 3, maxRows: 4 }
 		}
 	},
 	methods: {
@@ -63,6 +66,12 @@ export default {
 		border: none;
 		outline: none;
 		cursor: pointer;
+		&.reply {
+			background-color: $main-green-dark;
+			&:hover {
+				background-color: $main-green;
+			}
+		}
 		&:hover {
 			background-color: $main-blue;
 		}
