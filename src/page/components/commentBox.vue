@@ -3,8 +3,8 @@
 		<el-input type="textarea" :autosize="autosize" :value="value" resize="none"
 			class="comment-editor" @input="input">
 		</el-input>
-		<button class="comment-button"
-			:class="isReply&&'reply'">{{isReply?'回复':'评论'}}</button>
+		<button class="comment-button" :class="{disabled:isDisabled,reply:isReply}"
+			@click="handle">{{isReply?'回复':'评论'}}</button>
 	</div>
 </template>
 
@@ -30,10 +30,13 @@ export default {
 			content: ''
 		}
 	},
-
 	computed: {
 		autosize() {
 			return { minRows: 3, maxRows: 4 }
+		},
+		isDisabled() {
+			const val = this.value?.trim()
+			return !notEmpty(val)
 		}
 	},
 	methods: {
@@ -41,6 +44,9 @@ export default {
 		input(v) {
 			// console.log(e)
 			this.$emit('input', v)
+		},
+		handle() {
+			this.$emit('handle')
 		}
 	},
 	mounted() {}
@@ -74,6 +80,10 @@ export default {
 		}
 		&:hover {
 			background-color: $main-blue;
+		}
+		&.disabled {
+			pointer-events: none;
+			opacity: 0.7;
 		}
 	}
 }

@@ -52,7 +52,7 @@
 						</el-button>
 						<el-button slot="reference" class="t-btn" type="danger" icon="el-icon-delete"
 							@click="deleteById(row.id)">
-						</el-button>
+					</el-button>
 					</div>
 				</template>
 			</el-table-column>

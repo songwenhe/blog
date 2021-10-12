@@ -35,6 +35,7 @@ import Page from '@/page'
 export const constantRoutes = [
   {
     path: '/login',
+    name: 'login',
     component: () => import('@/views/login/index'),
     hidden: true
   },
@@ -175,13 +176,11 @@ export const constantRoutes = [
         meta: { title: '付费专区', icon: 'fa-paypal', actvieMenu: '/page/pay', page: true }
       },
       {
-        path: 'music',
-        name: 'pMusic',
-        component: () => import('@/page/music'),
-        show: true,
-        meta: { title: '音乐盒', icon: 'fa-music', actvieMenu: '/page/music', page: true }
+        path: 'post',
+        name: 'pPost',
+        component: () => import('@/page/post'),
+        meta: { page: true }
       },
-
       {
         path: 'list/:id',
         name: 'pList',
@@ -198,6 +197,7 @@ export const constantRoutes = [
         path: 'article/:id',
         name: 'pArticle',
         component: () => import('@/page/article'),
+        props: true,
         meta: { page: true }
       },
       {

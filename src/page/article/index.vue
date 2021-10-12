@@ -60,7 +60,7 @@
 						</ul>
 					</myCard>
 					<myCard :shadow="false" title="评论" class="comment" icon="fa-commenting-o">
-						<commentBox v-model="comment" />
+						<commentBox v-model="comment" @handle="addComment" />
 						<div class="comment-list">
 							<h3 class="comment-title">全部评论 ({{commentList.length}})</h3>
 							<div class="comment-item" v-for="i in commentList" :key="i.id">
@@ -119,7 +119,9 @@ import myCard from '../components/myCard'
 import commentBox from '../components/commentBox'
 import { API, getAllList } from '@/api'
 import * as type from '@/store/mutation_types'
+import { notEmpty } from '@/utils'
 export default {
+	props: ['id'],
 	data() {
 		return {
 			headlist: [],
@@ -151,6 +153,7 @@ export default {
 				return { ...i, author }
 			})
 			this.commentList = data
+			console.log(this.commentList)
 			// console.log('userlist', this.userlist)
 			// console.log('currentUser', this.currentUser)
 		},
@@ -159,6 +162,26 @@ export default {
 		},
 		getNoteTypeById(id) {
 			return this.noteTypeList.find((i) => i.id)
+		},
+		addComment() {
+			const content = this.comment.trim()
+			const obj = {
+				authorId: this.currentPost.userId,
+				notesId: this.id,
+				userId: this.currentUser.id,
+				createTime: new Date(),
+				content
+			}
+			console.log(obj)
+			// 				{
+			//   "authorId": "string",
+			//   "commentId": "string",
+			//   "content": "string",
+			//   "createTime": "2021-10-12T14:59:02.231Z",
+			//   "id": "string",
+			//   "notesId": "string",
+			//   "userId": "string"
+			// }
 		}
 	},
 	computed: {

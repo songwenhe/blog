@@ -36,10 +36,25 @@
 							</router-link>
 						</template>
 					</div>
-
 				</ul>
 			</nav>
-			<!-- <div class="tool">tool</div> -->
+			<div class="login-box">
+				<div class="edit-post">
+					<button class="edit-btn" @click="goto"><i class="fa fa-edit"></i>写文章</button>
+				</div>
+				<el-dropdown trigger="click" class="login-dropdown" @command="handleCommand">
+					<span class="el-dropdown-link">
+						<img src="http://placeimg.com/640/480/city" alt="" class="login-avatar"><i
+							class="el-icon-arrow-down el-icon--right"></i>
+					</span>
+					<el-dropdown-menu slot="dropdown">
+						<el-dropdown-item command="info"><i class="fa fa-sign-out"></i>个人中心
+						</el-dropdown-item>
+						<el-dropdown-item command="logout"><i class="fa fa-user-o"></i>退出登录
+						</el-dropdown-item>
+					</el-dropdown-menu>
+				</el-dropdown>
+			</div>
 			<!-- <div class="info">info</div> -->
 		</div>
 	</header>
@@ -48,6 +63,7 @@
 <script>
 import { API, getAllList } from '@/api'
 import { notEmpty } from '@/utils'
+import { mapActions } from 'vuex'
 export default {
 	data() {
 		return {
@@ -76,10 +92,21 @@ export default {
 		}
 	},
 	methods: {
+		...mapActions('user', ['logout']),
 		notEmpty,
 		async getList() {
 			const { data } = await getAllList(API.NOTE_TYPE)
 			this.list = data
+		},
+		handleCommand(e) {
+			if (e === 'info') {
+				this.$router.push({ name: 'pInfo' })
+			} else {
+				this.$router.replace({ name: 'login' })
+			}
+		},
+		goto() {
+			this.$router.push({ name: 'pPost' })
 		}
 	},
 	mounted() {
@@ -98,13 +125,12 @@ export default {
 		display: flex;
 	}
 	.nav {
-		flex: 3;
 		.nav-list {
 			display: flex;
 			height: 100%;
 			/* .nav-item_ */
 			::v-deep.nav-item {
-				min-width: 6.25rem;
+				min-width: 5.25rem;
 				cursor: pointer;
 				display: flex;
 				align-items: center;
@@ -136,11 +162,42 @@ export default {
 			}
 		}
 	}
-	.tool {
-		flex: 2;
-	}
-	.info {
+	.login-box {
+		width: 100%;
 		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+
+		.edit-post {
+			display: flex;
+			align-items: center;
+			padding-right: 4rem;
+			.edit-btn {
+				width: 120px;
+				height: 36px;
+				background-color: transparent;
+				border: 1px solid $main-red;
+				outline: none;
+				color: $main-red;
+				&:hover {
+					color: $main-white;
+					cursor: pointer;
+					background-color: $main-red-dark;
+				}
+			}
+		}
+		.login-dropdown {
+			cursor: pointer;
+			.el-dropdown-link {
+				display: flex;
+				align-items: center;
+			}
+			.login-avatar {
+				width: 36px;
+				height: 36px;
+			}
+		}
 	}
 }
 </style>
