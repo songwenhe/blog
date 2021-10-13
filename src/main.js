@@ -15,8 +15,10 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 import TableHeader from '@/components/TableHeader';
+import myEmpty from '@/page/components/myEmpty';
 // import Icon from '@/components/Icon';
 Vue.component('TableHeader', TableHeader)
+Vue.component('myEmpty', myEmpty)
 
 import MyPlugins from '@/plugin';
 Vue.use(MyPlugins)

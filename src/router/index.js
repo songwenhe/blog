@@ -182,14 +182,22 @@ export const constantRoutes = [
         meta: { page: true }
       },
       {
+        path: 'info',
+        name: 'pInfo',
+        component: () => import('@/page/info'),
+        meta: { page: true }
+      },
+      {
         path: 'list/:id',
         name: 'pList',
+        props: true,
         component: () => import('@/page/list'),
         meta: { page: true }
       },
       {
         path: 'tag/:id',
         name: 'pTag',
+        props: true,
         component: () => import('@/page/tag'),
         meta: { page: true }
       },

@@ -11,3 +11,4 @@ export const GET_TYPE = 'GET_TYPE'
 
 export const FETCH_USER = 'FETCH_USER'
 export const SET_USER = 'SET_USER'
+export const GET_USER = 'GET_USER'

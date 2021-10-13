@@ -15,7 +15,7 @@ export default {
 		},
 		size: {
 			type: String,
-			default: 60
+			default: '60'
 		},
 		desc: {
 			type: String,

@@ -17,6 +17,7 @@ import { API, getPageList } from '@/api'
 import { aMixin } from '@/mixin'
 import postList from '@/page/components/postList.vue'
 export default {
+	props: ['id'],
 	mixins: [aMixin],
 	data() {
 		return {

@@ -63,44 +63,45 @@
 						<commentBox v-model="comment" @handle="addComment" />
 						<div class="comment-list">
 							<h3 class="comment-title">全部评论 ({{commentList.length}})</h3>
-							<div class="comment-item" v-for="i in commentList" :key="i.id">
-								<div class="header">
-									<img src="http://placeimg.com/640/480/sports" alt="">
-									<div class="info">
-										<span class="author">匿名</span><span
-											class="date fa fa-clock-o">{{i.createTime | formatDate}}</span>
+							<template v-if="notEmpty(commentList)">
+								<div class="comment-item" v-for="i in commentList" :key="i.id">
+									<div class="header">
+										<img :src="file_url(i.author.fileUrl)" alt="">
+										<div class="info">
+											<span class="author">{{i.author.userName}}</span><span
+												class="date fa fa-clock-o">{{i.createTime | formatDate}}</span>
+										</div>
 									</div>
-								</div>
-								<div class="content">
-									<div v-if="true" class="reply">
-										<!-- 123 -->
-										<!-- <span class="reply-author link">
-											@你好
-										</span> -->
-										<p class="reply-content fa">
-											123132132
-										</p>
-										<ul class="reply-list">
-											<li class="reply-item" v-for="i in 1">
-												<div class="reply-header">
-													<div class="img-box">
-														<img src="http://placeimg.com/640/480/technics" alt="">
+									<div class="content">
+										<div class="reply">
+											<p class="reply-content fa">
+												{{i.content}}
+											</p>
+											<ul class="reply-list">
+												<li class="reply-item" v-for="reply in getReplyById(i.id)"
+													:key="reply.id">
+													<div class="reply-header">
+														<div class="img-box">
+															<img :src="file_url(reply.author.fileUrl)" alt="">
+														</div>
+														<span class="author">{{reply.author.userName}}</span>
+														<span
+															class="date fa fa-clock-o">{{reply.createTime| formatDate}}</span>
 													</div>
-													<span class="author">哈哈</span>
-													<span
-														class="date fa fa-clock-o">{{Date.now() | formatDate}}</span>
-												</div>
-												<div class="reply-text">兄弟们，卷起来！</div>
-											</li>
-										</ul>
+													<div class="reply-text">{{reply.content}}</div>
+												</li>
+											</ul>
+										</div>
 									</div>
+									<div class="footer">
+										<span class="fa fa-thumbs-o-up">赞(0)</span>
+										<span class="fa fa-reply" @click="setCurrent(i)">回复</span>
+									</div>
+									<commentBox v-if="current === i" v-model="reply" :isReply="true"
+										@handle="addReply(i)" />
 								</div>
-								<div class="footer">
-									<span class="fa fa-thumbs-o-up">赞(0)</span>
-									<span class="fa fa-reply" @click="setCurrent(i)">回复</span>
-								</div>
-								<commentBox v-if="current === i" v-model="reply" :isReply="true" />
-							</div>
+							</template>
+							<myEmpty desc="还没有评论" v-else></myEmpty>
 						</div>
 					</myCard>
 				</div>
@@ -117,9 +118,9 @@ import Asider from '@/page/components/asider.vue'
 import { mapActions, mapGetters } from 'vuex'
 import myCard from '../components/myCard'
 import commentBox from '../components/commentBox'
-import { API, getAllList } from '@/api'
+import { API, getAllList, insertOne } from '@/api'
 import * as type from '@/store/mutation_types'
-import { notEmpty } from '@/utils'
+import { notEmpty, handleMsg, file_url } from '@/utils'
 export default {
 	props: ['id'],
 	data() {
@@ -129,7 +130,8 @@ export default {
 			comment: '',
 			current: '',
 			reply: '',
-			commentList: []
+			commentList: [],
+			replyList: []
 		}
 	},
 	components: {
@@ -142,68 +144,98 @@ export default {
 			[type.FETCH_USER]: `user/${type.FETCH_USER}`,
 			[type.FETCH_TYPE]: `post/${type.FETCH_TYPE}`
 		}),
+		notEmpty,
+		file_url,
 		setCurrent(i) {
 			// console.log(i)
 			this.current = i
 		},
-		async getComment() {
-			const { data } = await getAllList(API.COMMENT)
-			data.map((i) => {
+		async fetchComment() {
+			const { data } = await getAllList(API.COMMENT, { notesId: this.id })
+			this.commentList = data.map((i) => {
 				const author = this.getUserById(i.userId)
 				return { ...i, author }
 			})
-			this.commentList = data
-			console.log(this.commentList)
-			// console.log('userlist', this.userlist)
-			// console.log('currentUser', this.currentUser)
 		},
 		getUserById(id) {
-			return this.userlist.find((i) => i.id === id)
+			return this[`user/${type.GET_USER}`](id)
+		},
+		getReplyById(id) {
+			return this.replyList.filter((i) => i.commentId === id)
 		},
 		getNoteTypeById(id) {
 			return this.noteTypeList.find((i) => i.id)
 		},
-		addComment() {
+		async addComment() {
 			const content = this.comment.trim()
-			const obj = {
+			const payload = {
 				authorId: this.currentPost.userId,
 				notesId: this.id,
 				userId: this.currentUser.id,
 				createTime: new Date(),
 				content
 			}
-			console.log(obj)
-			// 				{
-			//   "authorId": "string",
-			//   "commentId": "string",
-			//   "content": "string",
-			//   "createTime": "2021-10-12T14:59:02.231Z",
-			//   "id": "string",
-			//   "notesId": "string",
-			//   "userId": "string"
-			// }
+			const { success, message } = await insertOne(API.COMMENT, payload)
+			handleMsg(success, message, () => {
+				this.comment = ''
+				this.fetchComment()
+			})
+		},
+		async addReply(item) {
+			const content = this.reply.trim()
+			const payload = {
+				authorId: this.currentPost.userId,
+				commentId: item.id,
+				notesId: this.id,
+				userId: this.currentUser.id,
+				createTime: new Date(),
+				content
+			}
+			const { success, message } = await insertOne(API.REPLY, payload)
+			handleMsg(success, message, () => {
+				this.reply = ''
+				this.fetchReply()
+			})
+		},
+		async fetchReply() {
+			const { data } = await getAllList(API.REPLY)
+			this.replyList = data.map((i) => {
+				const author = this.getUserById(i.userId)
+				return { ...i, author }
+			})
+			console.log(this.replyList)
+		},
+		genarateTOC() {
+			const headList = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+			const h = [...this.$refs.html.childNodes].filter((i) =>
+				headList.includes(i.localName)
+			)
+			this.headlist = h.map((i, key) => {
+				i.setAttribute('id', `${i.localName}_${key}`)
+				return {
+					id: `${i.localName}_${key}`,
+					text: i.innerText,
+					tag: i.nodeName,
+					class: `${i.localName}_title`
+				}
+			})
 		}
 	},
 	computed: {
-		...mapGetters(['currentPost', 'userlist', 'currentUser', 'types'])
+		...mapGetters([
+			'currentPost',
+			'userlist',
+			'currentUser',
+			'types',
+			`user/${type.GET_USER}`
+		])
 	},
-	mounted() {
-		this.getComment()
-		this[type.FETCH_USER]()
+	async mounted() {
+		this.genarateTOC()
+		await this[type.FETCH_USER]()
+		this.fetchReply()
 		this[type.FETCH_TYPE]()
-		const headList = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
-		const h = [...this.$refs.html.childNodes].filter((i) =>
-			headList.includes(i.localName)
-		)
-		this.headlist = h.map((i, key) => {
-			i.setAttribute('id', `${i.localName}_${key}`)
-			return {
-				id: `${i.localName}_${key}`,
-				text: i.innerText,
-				tag: i.nodeName,
-				class: `${i.localName}_title`
-			}
-		})
+		this.fetchComment()
 	}
 }
 </script>

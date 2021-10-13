@@ -18,6 +18,7 @@ const getDefaultState = () => {
 
 const state = getDefaultState()
 
+
 const mutations = {
   RESET_STATE: (state) => {
     Object.assign(state, getDefaultState())
@@ -37,6 +38,11 @@ const mutations = {
   },
   [type.SET_USER]: (state, data) => {
     state.userlist = data
+  }
+}
+const getters = {
+  [type.GET_USER]: (state) => id => {
+    return state.userlist.find(i => i.id === id)
   }
 }
 
@@ -115,5 +121,6 @@ export default {
   namespaced: true,
   state,
   mutations,
+  getters,
   actions
 }

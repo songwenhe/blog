@@ -3,7 +3,7 @@
 		<template v-if="notEmpty(list)">
 			<div class="item" v-for="i in list" :key="i.id">
 				<div class="cover">
-					<span class="ribbon">原理</span>
+					<span class="ribbon orange">{{getName(i.lx)}}</span>
 					<!-- <img src="http://placeimg.com/640/480/cats" alt="" class="img"> -->
 					<img :src="_url(i.coverImage)" alt="" class="img"
 						onerror="this.src='http://placeimg.com/640/480/cats'">
@@ -33,8 +33,9 @@
 
 <script>
 import { notEmpty } from '@/utils'
-// import Empty from '@/page/components/Empty.vue'
 import myEmpty from '@/page/components/myEmpty.vue'
+import { mapGetters, mapActions } from 'vuex'
+import * as type from '@/store/mutation_types'
 export default {
 	name: 'postList',
 	props: {
@@ -46,14 +47,24 @@ export default {
 	components: {
 		myEmpty
 	},
+	computed: {
+		...mapGetters('post', [type.GET_TYPE])
+	},
 	methods: {
+		...mapActions('post', [type.FETCH_TYPE]),
 		notEmpty,
 		_url(path) {
 			return this.IMG_URL + path
 		},
 		handleClick(e) {
 			this.$emit('handle', e)
+		},
+		getName(id) {
+			return this[type.GET_TYPE](id)?.name
 		}
+	},
+	mounted() {
+		this[type.FETCH_TYPE]()
 	}
 }
 </script>
@@ -71,10 +82,12 @@ export default {
 		border-radius: 0.125rem;
 		@include box_shadow; /* box-shadow: 1px 2px 2px 2px #0002; */
 		.cover {
-			padding: 0.625rem;
+			margin: 0.625rem;
+			width: 8rem;
+			overflow: hidden;
 			.img {
-				min-width: 6rem;
-				height: 6rem;
+				width: auto;
+				height: 8rem;
 				overflow: hidden;
 				&:hover {
 					transform: scale(1.05);

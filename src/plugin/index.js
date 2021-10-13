@@ -2,11 +2,11 @@
 import { Message } from 'element-ui';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/androidstudio.css';
+import { IMG_URL, BASE_URL } from '@/utils/global'
 const MyPlugins = {}
-
 MyPlugins.install = function (Vue, options) {
-  Vue.prototype.BASE_URL = 'http://120.24.30.105:8088/'
-  Vue.prototype.IMG_URL = 'http://120.24.30.105:8001/'
+  Vue.prototype.BASE_URL = BASE_URL
+  Vue.prototype.IMG_URL = IMG_URL
   Vue.prototype.$message = Message
   Vue.filter('formatDate', (time, cFormat) => {
     const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'

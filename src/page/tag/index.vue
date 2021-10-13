@@ -13,11 +13,12 @@
 
 <script>
 import Asider from '@/page/components/asider.vue'
-import { API, getPageList } from '@/api'
+import { API, getTagById } from '@/api'
 import { aMixin } from '@/mixin'
 import postList from '@/page/components/postList.vue'
 export default {
 	mixins: [aMixin],
+	props: ['id'],
 	data() {
 		return {
 			list: []
@@ -32,7 +33,10 @@ export default {
 	},
 
 	methods: {
-		async getList() {}
+		async getList() {
+			const res = await getTagById({ id: this.id })
+			console.log(res)
+		}
 	}
 }
 </script>

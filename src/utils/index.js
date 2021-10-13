@@ -1,3 +1,6 @@
+import { Message } from 'element-ui'
+import { IMG_URL, BASE_URL } from '@/utils/global'
+
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time
@@ -221,4 +224,13 @@ export function notEmpty (val) {
       console.log('val :>> ', val);
       return !!val
   }
+}
+
+export function handleMsg (success, message, callback) {
+  Message[success ? 'success' : 'error'](message)
+  success && callback?.()
+}
+
+export function file_url (path) {
+  return IMG_URL + path
 }

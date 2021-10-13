@@ -3,10 +3,10 @@
 		<myCard title="关于我" icon="fa-user">
 			<div class="about">
 				<div class="qr-code">
-					<img src="http://placeimg.com/640/480/abstract" alt="">
+					<img :src="file_url(currentUser.fileUrl)" alt="">
 				</div>
 				<div class="author">
-					nihao123
+					{{currentUser.userName}}
 				</div>
 				<div class="link">
 					<i class="fa fa-weixin"></i>
@@ -31,27 +31,37 @@
 		</myCard>
 		<myCard title="近期评论" icon="fa-comment">
 			<ul class="comment">
-				<li class="comment-item" v-for="i in 8">
+				<li class="comment-item" v-for="i in commentList" :key="i.id">
 					<img src="http://placeimg.com/640/480/nightlife" alt="" class="img">
-					<span class="author">admin :</span>
-					<span class="text">大家好</span>
+					<span class="author">{{i.userId}} :</span>
+					<span class="text">{{i.content}}</span>
 				</li>
 			</ul>
 		</myCard>
-		<myCard title="近期笔记" icon="fa-book"></myCard>
-		<myCard title="网站信息" icon="fa-info"></myCard>
+		<myCard title="近期笔记" icon="fa-book">
+			<ul class="note-list">
+				<li class="note-item" v-for="i in noteList" :key="i.id" @click="gotoArticle(i)"><i
+						class="fa fa-book"></i>{{i.title}}
+				</li>
+			</ul>
+		</myCard>
+		<!-- <myCard title="网站信息" icon="fa-info"></myCard> -->
 	</div>
 </template>
 
 <script>
 import myCard from '@/page/components/myCard.vue'
-import { notEmpty } from '@/utils'
-import { API, getAllList } from '@/api'
+import { notEmpty, file_url } from '@/utils'
+import { API, getAllList, getOther, API_OTHER } from '@/api'
+import { mapGetters, mapMutations } from 'vuex'
+import * as type from '@/store/mutation_types'
 export default {
 	props: ['toc'],
 	data() {
 		return {
-			tagList: []
+			tagList: [],
+			commentList: [],
+			noteList: []
 		}
 	},
 	components: {
@@ -59,18 +69,13 @@ export default {
 	},
 	mounted() {
 		this.getTagList()
-		// window.addEventListener('scroll', function (e) {
-		// console.log(e)
-		// let t = document.body.scrollTop() // 目前监听的是整个body的滚动条距离
-		// if (t > 0) {
-		// 	$('.box').addClass('box-active')
-		// } else {
-		// 	$('.box').removeClass('box-active')
-		// }
-		// })
+		this.getLastComment()
+		this.getLastNotes()
 	},
 	methods: {
+		...mapMutations('post', [type.SET_CURRENT_POST]),
 		notEmpty,
+		file_url,
 		achor(el) {
 			const element = document.getElementById(el.id)
 			element.scrollIntoView({ behavior: 'smooth' })
@@ -79,7 +84,22 @@ export default {
 			const { data } = await getAllList(API.TAG)
 			// console.log(res)
 			this.tagList = data
+		},
+		async getLastComment() {
+			const { data } = await getOther(API_OTHER.NEW_COMMENT)
+			this.commentList = data
+		},
+		async getLastNotes() {
+			const { data } = await getOther(API_OTHER.NEW_NOTES)
+			this.noteList = data
+		},
+		gotoArticle(item) {
+			this[type.SET_CURRENT_POST](item)
+			this.$router.push({ name: 'pArticle', params: { id: item.id } })
 		}
+	},
+	computed: {
+		...mapGetters(['currentUser'])
 	}
 }
 </script>
@@ -89,10 +109,12 @@ export default {
 	.about {
 		.qr-code {
 			text-align: center;
+			padding: 8px;
 			img {
-				padding: 8px;
-				border: 1px solid #fafafa;
-				width: 60%;
+				height: 7.5rem;
+				width: 7.5rem;
+				border: 1px solid #eee;
+				/* width: 60%; */
 				/* margin: 0 auto; */
 			}
 		}
@@ -181,6 +203,23 @@ export default {
 				text-indent: 0.2em;
 				font-size: 14px;
 				color: $main-grey-dark;
+			}
+		}
+	}
+	.note-list {
+		.note-item {
+			line-height: 1.875rem;
+			font-size: 14px;
+			@include ellipsis;
+			&:hover {
+				cursor: pointer;
+				color: $main-red;
+				/* background-color: rgba($main-blue, 0.2); */
+			}
+			.fa {
+				&::before {
+					margin-right: 0.5rem;
+				}
 			}
 		}
 	}

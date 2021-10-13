@@ -1,4 +1,29 @@
 import request from '@/utils/request'
+// 
+// /apiStatistical/statisticalTags
+// /apiStatistical/statistical
+// /apiStatistical/notesTopTen
+// /apiStatistical/newNotes
+// /apiStatistical/newComment
+export const API = {
+  LOG: 'apiLogs',
+  REPLY: 'apiReply',
+  TAG: 'apiNoteTags',
+  NOTE: 'apiNotes',
+  LOG: 'apiLogs',
+  CONFIG: 'apiSysConfig',
+  USER: 'apiUser',
+  NOTE_TYPE: 'apiNoteType',
+  COMMENT: 'apiComment',
+  STATISTICAL: 'apiStatistical'
+}
+export const API_OTHER = {
+  STATISTICAL_TAGS: 'statisticalTags',
+  STATISTICAL: 'statistical',
+  NOTES_TOP_TEN: 'notesTopTen',
+  NEW_NOTES: 'newNotes',
+  NEW_COMMENT: 'newComment',
+}
 /*
   common
 */
@@ -8,7 +33,6 @@ export function getAllList (path) {
     method: 'get'
   })
 }
-
 export function getPageList (path, params) {
   return request({
     url: `/${path}/pageList`,
@@ -16,7 +40,6 @@ export function getPageList (path, params) {
     params
   })
 }
-
 export function getById (path, params) {
   return request({
     url: `/${path}/getById`,
@@ -45,7 +68,6 @@ export function deleteOne (path, params) {
     params
   })
 }
-
 /*
   user 
  */
@@ -73,6 +95,7 @@ export function changePassword (params) {
     params
   })
 }
+
 export function login (data) {
   return request({
     url: '/apiUser/api/login' + data,
@@ -94,17 +117,21 @@ export function register (data) {
     data
   })
 }
-/*
- post
-*/
-export function sendPost () {
+/**
+ * tag
+ */
 
+export function getTagById (params) {
+  console.log(params);
+  return request({
+    url: '/apiNotes/getListByTags',
+    method: 'get',
+    params
+  })
 }
-
 /*
  * other 
  */
-
 export function uploadFile (data) {
   return request({
     url: `/file/uploadFile`,
@@ -112,15 +139,13 @@ export function uploadFile (data) {
     data
   })
 }
-
-export const API = {
-  LOG: 'apiLogs',
-  REPLY: 'apiReply',
-  TAG: 'apiNoteTags',
-  NOTE: 'apiNotes',
-  LOG: 'apiLogs',
-  CONFIG: 'apiSysConfig',
-  USER: 'apiUser',
-  NOTE_TYPE: 'apiNoteType',
-  COMMENT: 'apiComment',
+/**
+ * static
+ */
+export function getOther (path, params) {
+  return request({
+    url: `/${API.STATISTICAL}/${path}`,
+    method: 'get',
+    params
+  })
 }
