@@ -176,6 +176,12 @@ export const constantRoutes = [
         meta: { title: '付费专区', icon: 'fa-paypal', actvieMenu: '/page/pay', page: true }
       },
       {
+        path: 'pay/:id',
+        name: 'pPayDetail',
+        component: () => import('@/page/pay/payDetail'),
+        meta: { page: true }
+      },
+      {
         path: 'post',
         name: 'pPost',
         component: () => import('@/page/post'),

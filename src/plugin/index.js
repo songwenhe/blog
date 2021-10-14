@@ -28,6 +28,9 @@ MyPlugins.install = function (Vue, options) {
     })
     return time_str
   })
+  Vue.filter('toX', (val, dig = 2) => {
+    return (val || 0).toFixed(dig)
+  })
   Vue.directive('hljs', {
     inserted (el) {
       let blocks = el.querySelectorAll('pre code');

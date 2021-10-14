@@ -118,7 +118,7 @@ import Asider from '@/page/components/asider.vue'
 import { mapActions, mapGetters } from 'vuex'
 import myCard from '../components/myCard'
 import commentBox from '../components/commentBox'
-import { API, getAllList, insertOne } from '@/api'
+import { API, getAllList, getPageList, insertOne } from '@/api'
 import * as type from '@/store/mutation_types'
 import { notEmpty, handleMsg, file_url } from '@/utils'
 export default {
@@ -151,7 +151,7 @@ export default {
 			this.current = i
 		},
 		async fetchComment() {
-			const { data } = await getAllList(API.COMMENT, { notesId: this.id })
+			const { data } = await getPageList(API.COMMENT, { notesId: this.id })
 			this.commentList = data.map((i) => {
 				const author = this.getUserById(i.userId)
 				return { ...i, author }

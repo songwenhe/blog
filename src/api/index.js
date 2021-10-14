@@ -139,6 +139,13 @@ export function uploadFile (data) {
     data
   })
 }
+export function alipay (data) {
+  return request({
+    url: `/alipay/alipay`,
+    method: 'post',
+    data
+  })
+}
 /**
  * static
  */
@@ -149,3 +156,14 @@ export function getOther (path, params) {
     params
   })
 }
+
+function isPrimeNumber (num) {
+  if (num === 1) return false
+  for (let i = 2; i < num; i++) {
+    if (num % i === 0) {
+      return false
+    }
+  }
+  return true
+}
+

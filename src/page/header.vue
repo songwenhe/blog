@@ -23,7 +23,7 @@
 								<el-dropdown-menu slot="dropdown">
 									<el-dropdown-item v-for="j in i.children" :key="j.id"
 										class="dropdown-item">
-										<router-link :to="{name:'pList',params:{id:i.id}}" tag="li">
+										<router-link :to="{name:'pList',params:{id:j.id}}" tag="li">
 											<span class="fa dropdown-text" :class="j.icon">{{j.name}}</span>
 										</router-link>
 									</el-dropdown-item>

@@ -32,7 +32,7 @@
 				</el-form-item>
 				<el-form-item label="文章标签" prop="tag">
 					<el-select v-model="ruleForm.tag" multiple filterable allow-create
-						default-first-option placeholder="请选择文章标签">
+						default-first-option placeholder="请选择文章标签" @change="tagChange" @keyup="keyup">
 						<el-option v-for="tag in tags" :key="tag.id" :label="tag.name"
 							:value="tag.id">
 						</el-option>
@@ -83,7 +83,8 @@ export default {
 				type: [{ required: true, message: '请选择笔记类型', trigger: 'blur' }],
 				price: [{ required: true, message: '请输入笔记价格', trigger: 'blur' }]
 			},
-			POST_STATE
+			POST_STATE,
+			tagArr: []
 		}
 	},
 	mixins: [aMixin],
@@ -117,9 +118,33 @@ export default {
 			// console.log('file :>> ', file)
 		},
 		// todo tag delete add
+		tagChange(e) {
+			// this.console.log(e)
+			this.tagArr = e
+		},
+		removeTag(e) {
+			console.log(e)
+		},
 		beforeAvatarUpload() {},
 		fetchCategory() {},
-		fetchTag() {},
+		handleTag() {
+			const payload = {
+				articleId,
+				createTime,
+				id,
+				tagId,
+				updateTime
+			}
+			this.handleTag.forEach((v) => {
+				// 				{
+				//   articleId:,
+				//   createTime:,
+				//   id: ,
+				//   tagId: ,
+				//   updateTime:
+				// }
+			})
+		},
 		sendPost(status) {
 			this.$refs.ruleForm.validate(async (valid) => {
 				if (!valid) return
@@ -135,6 +160,7 @@ export default {
 				const { success, message } = await insertOne(API.NOTE, payload)
 				this.$message[success ? 'success' : 'error'](message)
 				this.dialogVisible = false
+				this.handleTag()
 
 				if (success) {
 					this.$router.push({ name: 'pIndex' })
@@ -143,6 +169,9 @@ export default {
 		},
 		clearForm(formName) {
 			this.$refs[formName].resetFields()
+		},
+		keyup(e) {
+			console.log(e)
 		}
 	},
 	mounted() {

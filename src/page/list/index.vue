@@ -31,9 +31,16 @@ export default {
 	mounted() {
 		this.getList()
 	},
-
+	watch: {
+		id() {
+			this.getList()
+		}
+	},
 	methods: {
-		async getList() {}
+		async getList() {
+			const { list } = await getPageList(API.NOTE, { keyword: this.id })
+			this.list = list
+		}
 	}
 }
 </script>
