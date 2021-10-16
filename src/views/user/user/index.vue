@@ -122,7 +122,7 @@ import {
 	changePassword,
 	editUser
 } from '@/api'
-import { hashID, deepClone, validateEmail } from '@/utils'
+import { hashID, deepClone, validateEmail, validatePhone } from '@/utils'
 import { aMixin } from '@/mixin'
 
 export default {
@@ -136,6 +136,21 @@ export default {
 				callback()
 			}
 		}
+		const validPhone = (rule, value, callback) => {
+			if (!value?.trim().length) {
+				callback(new Error('请输入手机号码'))
+			} else if (!validatePhone(value)) {
+				callback(new Error('手机号码格式错误'))
+			} else {
+				callback()
+			}
+		}
+		const validAge = (rule, value, callback) => {
+			if (value < 0 || value > 120) callback(new Error('年龄应该在1-120之间'))
+			else {
+				callback()
+			}
+		}
 		return {
 			key: '',
 			list: [],
@@ -145,7 +160,8 @@ export default {
 			rules: {
 				userName: [{ required: true, message: '请输入账号', trigger: 'blur' }],
 				email: [{ validator: validEmail, trigger: 'blur' }],
-				phone: [{ required: true, message: '请输入手机号码', trigger: 'blur' }]
+				phone: [{ required: true, validator: validPhone, trigger: 'blur' }],
+				age: [{ trigger: 'blur', validator: validAge }]
 			},
 			isEdit: false
 		}

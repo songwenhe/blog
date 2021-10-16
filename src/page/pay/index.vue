@@ -6,8 +6,8 @@
 				<li class="pay-item" v-for="i in list" :key="i.id">
 					<div class="pay-item-box">
 						<div class="img-box">
-							<img :src="file_url(i.coverImgage)" alt=""
-								onerror="this.src='http://placeimg.com/640/480'" @click="gotoDetail(i)">
+							<img :src="file_url(i.coverImage)" alt="" @click="gotoDetail(i)"
+								onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 						</div>
 						<div class="content-box">
 							<p class="title" @click="gotoDetail(i)">{{i.title}}</p>
@@ -50,7 +50,7 @@ export default {
 		...mapActions('user', [type.FETCH_USER]),
 		async getPaylist() {
 			const { list, total } = await getPageList(API.NOTE, {
-				type: 1,
+				type: '1',
 				size: 999
 			})
 			this.list = list
@@ -93,7 +93,8 @@ export default {
 				overflow: hidden;
 				.img-box {
 					width: 100%;
-					max-height: 12.5rem;
+					height: 160px;
+					/* max-height: 12.5rem; */
 					overflow: hidden;
 					img {
 						height: 100%;

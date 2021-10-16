@@ -1,5 +1,5 @@
 <template>
-	<div class="my-empty">
+	<div class="my-empty" :style="{backgroundColor:bg}">
 		<i class="fa" :class="icon" :style="{fontSize:size+'px'}"></i>
 		<p class="desc">{{desc}}</p>
 	</div>
@@ -20,6 +20,10 @@ export default {
 		desc: {
 			type: String,
 			default: '暂无数据'
+		},
+		bg: {
+			type: String,
+			default: '#fafafa'
 		}
 	}
 }
@@ -31,9 +35,9 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	padding: 40px 0;
+	padding: 60px 0;
 	width: 100%;
-	background-color: #fafafa;
+	/* background-color: #fafafa; */
 	color: #999;
 	.desc {
 		color: #666;

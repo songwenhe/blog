@@ -8,18 +8,18 @@
 		<div class="right-menu">
 			<el-dropdown class="avatar-container" trigger="click">
 				<div class="avatar-wrapper">
-					<img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"
+					<img :src="file_url(currentUser.fileUrl)" class="user-avatar"
 						onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 					<i class="el-icon-caret-bottom" />
 				</div>
 				<el-dropdown-menu slot="dropdown" class="user-dropdown">
 					<router-link to="/">
-						<el-dropdown-item>
-							Home
+						<el-dropdown-item @click.native="goto">
+							前台
 						</el-dropdown-item>
 					</router-link>
 					<el-dropdown-item divided @click.native="logout">
-						<span style="display:block;">Log Out</span>
+						<span style="display:block;">登出</span>
 					</el-dropdown-item>
 				</el-dropdown-menu>
 			</el-dropdown>
@@ -31,22 +31,26 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-
+import { file_url } from '@/utils'
 export default {
 	components: {
 		Breadcrumb,
 		Hamburger
 	},
 	computed: {
-		...mapGetters(['sidebar', 'avatar'])
+		...mapGetters(['currentUser', 'sidebar'])
 	},
 	methods: {
+		file_url,
 		toggleSideBar() {
 			this.$store.dispatch('app/toggleSideBar')
 		},
 		async logout() {
 			await this.$store.dispatch('user/logout')
 			this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+		},
+		goto() {
+			this.$router.push({ name: 'pIndex' })
 		}
 	}
 }
@@ -122,7 +126,7 @@ export default {
 					cursor: pointer;
 					position: absolute;
 					right: -20px;
-					top: 25px;
+					top: 15px;
 					font-size: 12px;
 				}
 			}

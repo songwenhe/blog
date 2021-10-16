@@ -3,30 +3,49 @@
 		<el-row :gutter="60" class="w">
 			<el-col :span="18" class="detail">
 				<div class="main">
-					<div class="info">
-						<div class="date"><i
-								class="fa fa-clock-o"></i>{{currentPost.createTime | formatDate}}</div>
-						<div class="view"><i class="fa fa-eye"></i>浏览({{currentPost.view || 0}})</div>
-						<div class="comment"><i
-								class="fa fa-commenting-o"></i>评论({{currentPost.replyNum || 0}})
-						</div>
-					</div>
+
 					<div class="content">
 						<h1 class="title">{{currentPost.title}}</h1>
+						<div class="top-info">
+							<div class="img-box">
+								<img :src="file_url(currentAuthor.fileUrl)" alt=""
+									v-if="notEmpty(currentAuthor)"
+									onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
+							</div>
+							<div class="info" v-if="notEmpty(currentAuthor)">
+								<div class="author-info">
+									<span class="author">{{currentAuthor.userName}} </span>
+									<button class="btn" :class="{focus:isFocus}"
+										@click="focusUser">{{isFocus?'已关注':'关注Ta'}}</button>
+								</div>
+								<div class="other">
+									<div class="date"><i
+											class="fa fa-clock-o"></i>{{currentPost.createTime | formatDate}}
+									</div>
+									<div class="view"><i class="fa fa-eye"></i>浏览({{currentPost.view || 0}})
+									</div>
+									<div class="comment"><i
+											class="fa fa-commenting-o"></i>评论({{currentPost.replyNum || 0}})
+									</div>
+								</div>
+							</div>
+
+						</div>
 						<div v-html="currentPost.htmlContent" class="html" v-hljs ref="html"></div>
 					</div>
 					<el-divider>本文完</el-divider>
 					<div class="tools">
-						<i class="fa fa-thumbs-o-up"></i>
-						<i class="fa fa-heart"></i><i class="fa fa-share-alt"></i>
+						<i class="fa fa-thumbs-o-up" :class="{like:isLike}" @click="likeArticle"></i>
+						<i class="fa fa-heart" :class="{star:isStar}" @click="starArticle"></i>
+						<i class="fa fa-share-alt"></i>
 					</div>
 					<div class="note">
-						<p>所属分类：<span class="category" v-for="i in 3">前端</span></p>
+						<p>所属分类：<span class="category">前端</span></p>
 						<p>本文标签：<span class="tag" v-for="i in 4">javascript</span></p>
 					</div>
 				</div>
 				<div class="footer">
-					<div class="goto">
+					<div class="goto" v-if="false">
 						<div class="pre">
 							<p><i class="fa fa-angle-left"></i>上一篇</p>
 							<p>阿斯顿萨达</p>
@@ -38,21 +57,23 @@
 					</div>
 					<myCard :shadow="false" title="热门推荐" class="hots" icon="fa-fire">
 						<ul class="hot-list">
-							<li class="hot-item" v-for="i in 8">
+							<li class="hot-item" v-for="i in randNotes" :key="i.id">
 								<div class="cover">
-									<img src="http://placeimg.com/640/480/animals" alt="">
+									<img :src="file_url(i.coverImage)" alt=""
+										onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 								</div>
 								<div class="info">
-									<div class="title">SaaS的</div>
+									<div class="title" @click="gotoDetail(i)">{{i.title}}</div>
 									<div class="other">
-										<span class="fa fa-eye">浏览(40)</span><span
-											class="fa fa-commenting-o">评论(0)</span>
+										<span class="fa fa-eye">浏览({{i.view || 0}})</span><span
+											class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
 									</div>
 								</div>
 							</li>
 						</ul>
 					</myCard>
-					<myCard :shadow="false" title="相关笔记" class="related" icon="fa-bookmark-o">
+					<myCard :shadow="false" title="相关笔记" class="related" icon="fa-bookmark-o"
+						v-if="false">
 						<ul class="related-list">
 							<li class="related-item" v-for="i in 4">
 								<i class="fa fa-book"></i>132123
@@ -62,11 +83,13 @@
 					<myCard :shadow="false" title="评论" class="comment" icon="fa-commenting-o">
 						<commentBox v-model="comment" @handle="addComment" />
 						<div class="comment-list">
-							<h3 class="comment-title">全部评论 ({{commentList.length}})</h3>
+							<h3 class="comment-title">全部评论
+								({{notEmpty(commentList)?commentList.length:0}})</h3>
 							<template v-if="notEmpty(commentList)">
 								<div class="comment-item" v-for="i in commentList" :key="i.id">
 									<div class="header">
-										<img :src="file_url(i.author.fileUrl)" alt="">
+										<img :src="file_url(i.author.fileUrl)" alt=""
+											onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 										<div class="info">
 											<span class="author">{{i.author.userName}}</span><span
 												class="date fa fa-clock-o">{{i.createTime | formatDate}}</span>
@@ -82,7 +105,8 @@
 													:key="reply.id">
 													<div class="reply-header">
 														<div class="img-box">
-															<img :src="file_url(reply.author.fileUrl)" alt="">
+															<img :src="file_url(reply.author.fileUrl)" alt=""
+																onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 														</div>
 														<span class="author">{{reply.author.userName}}</span>
 														<span
@@ -115,10 +139,20 @@
 
 <script>
 import Asider from '@/page/components/asider.vue'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import myCard from '../components/myCard'
 import commentBox from '../components/commentBox'
-import { API, getAllList, getPageList, insertOne } from '@/api'
+import {
+	API,
+	deleteOne,
+	getAllList,
+	getPageList,
+	insertOne,
+	notesLike,
+	starNoteList,
+	starUserList,
+	getComment
+} from '@/api'
 import * as type from '@/store/mutation_types'
 import { notEmpty, handleMsg, file_url } from '@/utils'
 export default {
@@ -131,7 +165,13 @@ export default {
 			current: '',
 			reply: '',
 			commentList: [],
-			replyList: []
+			replyList: [],
+			isLike: false,
+			isStar: false,
+			isFocus: false,
+			focusText: '关注',
+			starInfo: {},
+			notes: []
 		}
 	},
 	components: {
@@ -144,6 +184,7 @@ export default {
 			[type.FETCH_USER]: `user/${type.FETCH_USER}`,
 			[type.FETCH_TYPE]: `post/${type.FETCH_TYPE}`
 		}),
+		...mapMutations('post', [type.SET_CURRENT_POST]),
 		notEmpty,
 		file_url,
 		setCurrent(i) {
@@ -151,11 +192,12 @@ export default {
 			this.current = i
 		},
 		async fetchComment() {
-			const { data } = await getPageList(API.COMMENT, { notesId: this.id })
-			this.commentList = data.map((i) => {
+			const list = await getComment({ notesId: this.id })
+			this.commentList = list?.map((i) => {
 				const author = this.getUserById(i.userId)
 				return { ...i, author }
 			})
+			console.log(this.commentList)
 		},
 		getUserById(id) {
 			return this[`user/${type.GET_USER}`](id)
@@ -199,7 +241,7 @@ export default {
 		},
 		async fetchReply() {
 			const { data } = await getAllList(API.REPLY)
-			this.replyList = data.map((i) => {
+			this.replyList = data?.map((i) => {
 				const author = this.getUserById(i.userId)
 				return { ...i, author }
 			})
@@ -219,6 +261,63 @@ export default {
 					class: `${i.localName}_title`
 				}
 			})
+		},
+		async likeArticle() {
+			const { success, message } = await notesLike({ id: this.currentPost.id })
+			handleMsg(success, message)
+			this.isLike = success
+		},
+		async starArticle() {
+			if (this.isStar === false) {
+				const { success, message } = await insertOne(API.FOCUSON, {
+					createTime: new Date(),
+					memberId: this.id,
+					type: 1,
+					userId: this.userId
+				})
+				handleMsg(success, message, () => {
+					this.fetchStarNoteList()
+				})
+			} else {
+				const res = await deleteOne(API.FOCUSON, { id })
+			}
+		},
+		async fetchStarNoteList() {
+			const { data } = await starNoteList({ id: this.userId })
+			this.isStar = data.findIndex((i) => i.id === this.id) !== -1
+		},
+		async fetchStarUserList() {
+			const { data } = await starUserList({ id: this.userId })
+			console.log(`data`, data)
+			this.isFocus =
+				data.findIndex((i) => i.id === this.currentPost.userId) !== -1
+		},
+		async focusUser() {
+			if (this.currentPost.userId === this.userId) {
+				return this.$message.error('不能关注自己')
+			}
+			const { success, message } = await insertOne(API.FOCUSON, {
+				createTime: new Date(),
+				memberId: this.currentPost.userId,
+				type: 0,
+				userId: this.userId
+			})
+			handleMsg(success, message, () => {
+				this.fetchStarUserList()
+			})
+			console.log(success, message)
+		},
+		async fetchNotes() {
+			const { data } = await getAllList(API.NOTE)
+			this.notes = data
+		},
+		// randNotes(len = 8) {
+		// 	const notes = this.notes.filter((i) => i.id !== this.id)
+		// 	return notes.slice(0, len).sort(() => 0.5 - Math.random())
+		// },
+		gotoDetail(i) {
+			this[type.SET_CURRENT_POST](i)
+			this.$router.push({ name: 'pArticle', params: { id: i.id } })
 		}
 	},
 	computed: {
@@ -227,8 +326,16 @@ export default {
 			'userlist',
 			'currentUser',
 			'types',
+			'userId',
 			`user/${type.GET_USER}`
-		])
+		]),
+		currentAuthor() {
+			return this.getUserById(this.currentPost.userId)
+		},
+		randNotes() {
+			const notes = this.notes.filter((i) => i.id !== this.id)
+			return notes.slice(0, 8).sort(() => 0.5 - Math.random())
+		}
 	},
 	async mounted() {
 		this.genarateTOC()
@@ -236,6 +343,9 @@ export default {
 		this.fetchReply()
 		this[type.FETCH_TYPE]()
 		this.fetchComment()
+		this.fetchStarNoteList()
+		this.fetchStarUserList()
+		this.fetchNotes()
 	}
 }
 </script>
@@ -250,11 +360,61 @@ export default {
 			padding: 0.9375rem 2rem;
 			background-color: #fff;
 			margin-bottom: 2rem;
-			.info {
-				/* background-color: #fff; */
-				justify-content: flex-end;
-				@include icons;
+			.top-info {
+				display: flex;
+				align-items: center;
+
+				.img-box {
+					width: 50px;
+					height: 50px;
+					margin-right: 10px;
+					img {
+						border-radius: 50%;
+						width: 100%;
+						height: 100%;
+					}
+				}
+				.info {
+					display: flex;
+					height: 60px;
+					width: 100%;
+					flex-direction: column; /* background-color: #fff; */
+					justify-content: space-between;
+					.author-info {
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+						.author {
+							color: $main-black;
+							font-size: 16px;
+						}
+						.btn {
+							font-size: 14px;
+							border-radius: 4px;
+							border: 1px solid;
+							cursor: pointer;
+							height: 32px;
+							width: 80px;
+							margin-left: auto;
+							background-color: transparent;
+							color: #06f;
+							&:hover {
+								opacity: 0.7;
+								/* background-color: $main-blue; */
+							}
+							&.focus {
+								color: #fff;
+								background-color: #06f;
+							}
+						}
+					}
+					.other {
+						display: flex;
+						@include icons;
+					}
+				}
 			}
+
 			.title {
 				margin: 0;
 				padding: 0.5rem 0 1.2rem;
@@ -294,16 +454,26 @@ export default {
 					justify-content: center;
 					font-size: 26px;
 					padding: 0.5rem;
-					border: 1px solid #f0f0f0;
+					/* border: 1px solid #f0f0f0; */
 					margin-right: 1rem;
 					border-radius: 4px;
 					&.fa-thumbs-o-up {
 						color: $main-blue;
 						border-color: $main-blue;
+						&.like {
+							border-color: transparent;
+							background-color: $main-blue;
+							color: $main-white;
+						}
 					}
 					&.fa-heart {
 						color: $main-red;
 						border-color: $main-red;
+						&.star {
+							border-color: transparent;
+							background-color: $main-red;
+							color: $main-white;
+						}
 					}
 					&.fa-share-alt {
 						color: $main-green;
@@ -381,8 +551,8 @@ export default {
 						.cover {
 							padding: 0 0.625rem;
 							img {
-								max-height: 4rem;
-								width: auto;
+								width: 100px;
+								height: 60px;
 								transition: all 0.5s linear;
 								&:hover {
 									/* scale: 1.5; */

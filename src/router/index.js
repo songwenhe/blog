@@ -39,6 +39,11 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
+  {
+    path: '/',
+    hidden: true,
+    redirect: '/page/index'
+  },
 
   {
     path: '/404',
@@ -47,14 +52,14 @@ export const constantRoutes = [
   },
 
   {
-    path: '/',
+    path: '/home',
     component: Layout,
-    redirect: '/home',
+    redirect: '/home/index',
     children: [{
-      path: 'home',
+      path: 'index',
       name: 'Home',
       component: () => import('@/views/home'),
-      meta: { title: '首页', icon: 'el-icon-s-home' }
+      meta: { title: '首页', icon: 'el-icon-s-home', actvieMenu: '/home/index' }
     }]
   },
   {
@@ -90,12 +95,12 @@ export const constantRoutes = [
         component: () => import('@/views/content/tag'),
         meta: { title: '标签列表', icon: 'dashboard', actvieMenu: '/content/tag' }
       },
-      {
-        path: 'file',
-        name: 'File',
-        component: () => import('@/views/content/file'),
-        meta: { title: '文件列表', icon: 'dashboard', actvieMenu: '/content/file' }
-      },
+      // {
+      //   path: 'file',
+      //   name: 'File',
+      //   component: () => import('@/views/content/file'),
+      //   meta: { title: '文件列表', icon: 'dashboard', actvieMenu: '/content/file' }
+      // },
 
     ]
   },
@@ -147,12 +152,12 @@ export const constantRoutes = [
         component: () => import('@/views/setting/log'),
         meta: { title: '系统日志', icon: 'dashboard', actvieMenu: '/setting/log' }
       },
-      {
-        path: 'oss',
-        name: 'Oss',
-        component: () => import('@/views/setting/oss'),
-        meta: { title: '阿里云OSS', icon: 'dashboard', actvieMenu: '/setting/oss' }
-      },
+      // {
+      //   path: 'oss',
+      //   name: 'Oss',
+      //   component: () => import('@/views/setting/oss'),
+      //   meta: { title: '阿里云OSS', icon: 'dashboard', actvieMenu: '/setting/oss' }
+      // },
     ]
   },
   {
@@ -242,3 +247,18 @@ export function resetRouter () {
 }
 
 export default router
+
+
+
+function averageNum (arr) {
+  const len = arr.length
+  if (len === 0) return 0
+  let sum = 0, oddLen = 0;
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] % 2 === 1) {
+      sum += arr[i]
+      oddLen++
+    }
+  }
+  return sum / oddLen
+}

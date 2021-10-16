@@ -4,9 +4,8 @@
 			<div class="item" v-for="i in list" :key="i.id">
 				<div class="cover">
 					<span class="ribbon orange">{{getName(i.lx)}}</span>
-					<!-- <img src="http://placeimg.com/640/480/cats" alt="" class="img"> -->
 					<img :src="_url(i.coverImage)" alt="" class="img"
-						onerror="this.src='http://placeimg.com/640/480/cats'">
+						onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 				</div>
 				<div class="info">
 					<div class="title">{{i.title}}</div>
@@ -60,7 +59,7 @@ export default {
 			this.$emit('handle', e)
 		},
 		getName(id) {
-			return this[type.GET_TYPE](id)?.name
+			return this[type.GET_TYPE](id)?.name || '杂项'
 		}
 	},
 	mounted() {

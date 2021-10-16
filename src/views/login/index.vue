@@ -133,7 +133,7 @@ export default {
 		}
 	},
 	methods: {
-		...mapMutations('user', ['SET_CRTUSER']),
+		// ...mapMutations('user', ['SET_CRTUSER']),
 		...mapActions(['user/login']),
 		toggleBtn() {
 			this.toggle
@@ -155,9 +155,15 @@ export default {
 				this.loading = true
 				if (formName === 'loginForm') {
 					this['user/login'](this[formName])
-						.then(({ success, message }) => {
+						.then(({ success, message, data }) => {
 							// success && this.$router.push({ path: this.redirect || '/' })
-							success && this.$router.push({ path: '/page' })
+							if (success) {
+								const isAuth = data.state === 1
+								isAuth
+									? this.$router.push({ name: 'Home' })
+									: this.$router.push({ name: 'pIndex' })
+							}
+							// success && this.$router.push({ path: '/page' })
 							!success && message && this.$message.error({ message })
 						})
 						.catch(({ message }) => {
@@ -170,9 +176,12 @@ export default {
 					const { username: userName, newPassword: passWord } = this[formName]
 					const { data, message, success } = await register({
 						userName,
-						passWord
+						passWord,
+						createTime: new Date(),
+						state: 0
 					})
 					!success && this.message.success({ message })
+					this.loading = false
 					if (success) {
 						this.toggleBtn()
 						this.$message.success({ message: '注册成功!' })
@@ -189,8 +198,8 @@ export default {
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
 $bg: #283443;
-$light_gray: #fff;
-$cursor: #fff;
+$light_gray: #666;
+$cursor: #666;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
 	.login-container .el-input input {
@@ -232,7 +241,7 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg: #2d3a4b;
+$bg: #f0f0f0;
 $dark_gray: #889aa4;
 $light_gray: #eee;
 
@@ -245,15 +254,16 @@ $light_gray: #eee;
 	transform-style: preserve-3d;
 	perspective: 900px;
 	.login-form {
+		background-color: #fff;
 		position: absolute;
-		top: 0;
+		top: 20%;
 		left: 50%;
 		transition: 1s;
 		backface-visibility: hidden;
 		transform: perspective(900px) translateX(-50%);
 		width: 520px;
 		max-width: 100%;
-		padding: 160px 35px 0;
+		padding: 50px 35px 100px;
 		overflow: hidden;
 		transform-origin: center;
 		&.toggle {
@@ -263,7 +273,7 @@ $light_gray: #eee;
 
 	.tips {
 		font-size: 14px;
-		color: #fff;
+		color: #666;
 		margin-bottom: 10px;
 
 		span {
@@ -286,7 +296,7 @@ $light_gray: #eee;
 
 		.title {
 			font-size: 26px;
-			color: $light_gray;
+			color: $main-blue-dark;
 			margin: 0px auto 40px auto;
 			text-align: center;
 			font-weight: bold;

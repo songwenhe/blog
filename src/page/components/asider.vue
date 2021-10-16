@@ -3,7 +3,8 @@
 		<myCard title="关于我" icon="fa-user">
 			<div class="about">
 				<div class="qr-code">
-					<img :src="file_url(currentUser.fileUrl)" alt="">
+					<img :src="file_url(currentUser.fileUrl)" alt=""
+						onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 				</div>
 				<div class="author">
 					{{currentUser.userName}}
@@ -32,7 +33,8 @@
 		<myCard title="近期评论" icon="fa-comment">
 			<ul class="comment">
 				<li class="comment-item" v-for="i in commentList" :key="i.id">
-					<img src="http://placeimg.com/640/480/nightlife" alt="" class="img">
+					<img :src="file_url(i.extend1)" alt="" class="img"
+						onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 					<span class="author">{{i.userId}} :</span>
 					<span class="text">{{i.content}}</span>
 				</li>

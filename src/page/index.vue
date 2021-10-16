@@ -25,7 +25,7 @@ export default {
 <style lang="scss" scoped>
 .page {
 	min-height: 100vh;
-	background-color: #f0f0f0;
+	background-color: #f5f6f7;
 	display: flex;
 	flex-direction: column;
 }

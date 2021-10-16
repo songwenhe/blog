@@ -3,7 +3,7 @@ import { login, logout, API, getAllList } from '@/api'
 
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
-import { getVal, setVal, obj2Params } from '@/utils'
+import { getVal, setVal, removeVal, obj2Params } from '@/utils'
 import * as type from '../mutation_types'
 
 const getDefaultState = () => {
@@ -32,7 +32,7 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
-  SET_CRTUSER: (state, user) => {
+  [type.SET_CRTUSER]: (state, user) => {
     state.currentUser = user
     setVal('currentUser', user)
   },
@@ -53,11 +53,12 @@ const actions = {
       login(params).then(res => {
         const { data, message, success } = res
         if (success) {
-          const token = getToken()
-          commit('SET_TOKEN', token)
-          commit('SET_CRTUSER', data)
+          // const token = getToken()
+          // debugger
+          // commit('SET_TOKEN', token)
+          commit(type.SET_CRTUSER, data)
         }
-        resolve({ success, message })
+        resolve({ success, message, data })
       }).catch(err => {
         reject({ success: false, message: err })
       })
@@ -88,6 +89,7 @@ const actions = {
       logout().then(() => {
         removeToken() // must remove  token  first
         resetRouter()
+        removeVal('currentUser')
         commit('RESET_STATE')
         resolve()
       }).catch(error => {

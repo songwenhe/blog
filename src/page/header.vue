@@ -44,7 +44,8 @@
 				</div>
 				<el-dropdown trigger="click" class="login-dropdown" @command="handleCommand">
 					<span class="el-dropdown-link">
-						<img src="http://placeimg.com/640/480/city" alt="" class="login-avatar"><i
+						<img :src="file_url(currentUser.fileUrl)" alt="" class="login-avatar"
+							onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'"><i
 							class="el-icon-arrow-down el-icon--right"></i>
 					</span>
 					<el-dropdown-menu slot="dropdown">
@@ -62,8 +63,8 @@
 
 <script>
 import { API, getAllList } from '@/api'
-import { notEmpty } from '@/utils'
-import { mapActions } from 'vuex'
+import { notEmpty, file_url } from '@/utils'
+import { mapActions, mapGetters } from 'vuex'
 export default {
 	data() {
 		return {
@@ -73,6 +74,7 @@ export default {
 	},
 
 	computed: {
+		...mapGetters(['currentUser']),
 		myNav() {
 			const nav = this.$router.options.routes.filter((i) => i.hasPage)[0]
 				.children
@@ -94,6 +96,7 @@ export default {
 	methods: {
 		...mapActions('user', ['logout']),
 		notEmpty,
+		file_url,
 		async getList() {
 			const { data } = await getAllList(API.NOTE_TYPE)
 			this.list = data
@@ -102,12 +105,17 @@ export default {
 			if (e === 'info') {
 				this.$router.push({ name: 'pInfo' })
 			} else {
-				this.$router.replace({ name: 'login' })
+				this.logout().then(() => {
+					this.$router.replace({ name: 'login' })
+				})
 			}
 		},
 		goto() {
 			this.$router.push({ name: 'pPost' })
 		}
+	},
+	watch:{
+
 	},
 	mounted() {
 		this.getList()

@@ -15,7 +15,8 @@ export const API = {
   USER: 'apiUser',
   NOTE_TYPE: 'apiNoteType',
   COMMENT: 'apiComment',
-  STATISTICAL: 'apiStatistical'
+  STATISTICAL: 'apiStatistical',
+  FOCUSON: 'apiFocusOn'
 }
 export const API_OTHER = {
   STATISTICAL_TAGS: 'statisticalTags',
@@ -129,6 +130,18 @@ export function getTagById (params) {
     params
   })
 }
+
+/**
+ * static
+ */
+export function getOther (path, params) {
+  return request({
+    url: `/${API.STATISTICAL}/${path}`,
+    method: 'get',
+    params
+  })
+}
+
 /*
  * other 
  */
@@ -146,24 +159,50 @@ export function alipay (data) {
     data
   })
 }
-/**
- * static
- */
-export function getOther (path, params) {
+export function notesLike (params) {
   return request({
-    url: `/${API.STATISTICAL}/${path}`,
+    url: `/apiNotes/notesLike`,
     method: 'get',
     params
   })
 }
 
-function isPrimeNumber (num) {
-  if (num === 1) return false
-  for (let i = 2; i < num; i++) {
-    if (num % i === 0) {
-      return false
-    }
-  }
-  return true
+/**
+ * star
+ */
+
+// export function likeNote (params) {
+//   return request({
+//     url: `/apiNotes/notesLike`,
+//     method: 'get',
+//     params
+//   })
+// }
+
+
+export function starNoteList (params) {
+  return request({
+    url: `/apiUser/findNotesById`,
+    method: 'get',
+    params
+  })
+}
+export function starUserList (params) {
+  return request({
+    url: `/apiUser/findFocusId`,
+    method: 'get',
+    params
+  })
 }
 
+
+/**
+ * comment
+ */
+export function getComment (params) {
+  return request({
+    url: `/apiComment/getCommentByNotesId`,
+    method: 'get',
+    params
+  })
+}

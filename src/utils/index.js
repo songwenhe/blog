@@ -173,7 +173,7 @@ export function setVal (key, value) {
 
 export function getVal (key) {
   const val = localStorage.getItem(key)
-  return val && JSON.parse(val)
+  return notEmpty(val) && JSON.parse(val)
 }
 
 export function removeVal (key) {
@@ -185,8 +185,9 @@ export function setVals (key, value) {
 }
 
 export function getVals (key) {
+  // debugger
   const val = sessionStorage.getItem(key)
-  return val && JSON.parse(val)
+  return notEmpty(val) && JSON.parse(val)
 }
 
 export function removeVals (key) {
@@ -220,14 +221,14 @@ export function notEmpty (val) {
     case types.OBJECT:
       return !!Object.keys(val).length
     default:
-      console.log('type :>> ', type);
-      console.log('val :>> ', val);
+      // console.log('type :>> ', type);
+      // console.log('val :>> ', val);
       return !!val
   }
 }
 
 export function handleMsg (success, message, callback) {
-  Message[success ? 'success' : 'error'](message)
+  notEmpty(message) && Message[success ? 'success' : 'error'](message)
   success && callback?.()
 }
 
