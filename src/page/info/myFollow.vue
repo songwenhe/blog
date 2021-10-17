@@ -1,27 +1,31 @@
 <template>
 	<div class="my-follow">
 		<Card title="我的关注">
-			<ul class="star-list">
-				<li class="star-item" v-for="i in list" :key="i.id">
-					<img :src="file_url(i.fileUrl)" alt=""
-						onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
-					<div class="info">
-						<p class="author">{{i.userName}}</p>
-						<p class="desc">{{i.description}}</p>
-					</div>
-					<button class="btn"><i class="fa fa-star"></i>已关注</button>
-				</li>
-			</ul>
+			<template v-if="notEmpty(list)">
+				<ul class="star-list">
+					<li class="star-item" v-for="i in list" :key="i.id">
+						<img :src="file_url(i.fileUrl)" alt=""
+							onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
+						<div class="info">
+							<p class="author">{{i.userName}}</p>
+							<p class="desc">{{i.description || '这个人太懒了'}}</p>
+						</div>
+						<button class="btn" @click="handleFocus(i)"><i
+								class="fa fa-star"></i>已关注</button>
+					</li>
+				</ul>
+			</template>
+			<myEmpty v-else></myEmpty>
 		</Card>
 	</div>
 </template>
 
 <script>
 import Card from './card.vue'
-import { API, starUserList } from '@/api'
+import { API, starUserList, deleteOne } from '@/api'
 import { mapGetters } from 'vuex'
 import * as types from '@/store/mutation_types'
-import { notEmpty, file_url } from '@/utils'
+import { notEmpty, file_url, handleMsg } from '@/utils'
 export default {
 	props: ['user'],
 	components: {
@@ -42,7 +46,18 @@ export default {
 		file_url,
 		async getList() {
 			const { data } = await starUserList({ id: this.user.id })
-			this.list = data
+			this.list = data.map((i) => {
+				const pwd = Object.entries(i)
+				const [key, value] = pwd[0]
+				return { key, ...value }
+			})
+			// this.list = data
+		},
+		async handleFocus(i) {
+			const { success, message } = await deleteOne(API.FOCUSON, { id: i.key })
+			handleMsg(success, message, () => {
+				this.getList()
+			})
 		}
 	},
 	mounted() {

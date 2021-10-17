@@ -1,33 +1,38 @@
 <template>
 	<div class="my-note">
 		<Card title="收藏笔记">
-			<div class="box" v-for="i in list" :key="i.id">
-				<div class="note-brief">
-					<h3 @click="gotoDetail(i)">{{i.title}}</h3>
-					<p>{{i.title}}</p>
-					<div class="other" v-if="notEmpty(i)">
-						<span class="fa fa-star">已收藏</span>
-						<span class="fa fa-user"
-							v-if="notEmpty(i.author)">{{i.author.userName}}</span>
-						<span class=" fa fa-eye">浏览({{i.view || 0}})</span><span
-							class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
-						<span class="fa fa-thumbs-o-up">点赞({{i.likeNum || 0}})</span>
+			<template v-if="notEmpty(list)">
+
+				<div class="box" v-for="i in list" :key="i.id">
+					<div class="note-brief">
+						<h3 @click="gotoDetail(i)">{{i.title}}</h3>
+						<p>{{i.title}}</p>
+						<div class="other" v-if="notEmpty(i)">
+							<span class="fa fa-star" @click="handleStar(i)">已收藏</span>
+							<span class="fa fa-user"
+								v-if="notEmpty(i.author)">{{i.author.userName}}</span>
+							<span class=" fa fa-eye">浏览({{i.view || 0}})</span><span
+								class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
+							<span class="fa fa-thumbs-o-up">点赞({{i.likeNum || 0}})</span>
+						</div>
+					</div>
+					<div class="cover-box">
+						<img :src="file_url(i.coverImage)" alt=""
+							onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 					</div>
 				</div>
-				<div class="cover-box">
-					<img :src="file_url(i.coverImage)" alt="">
-				</div>
-			</div>
+			</template>
+			<myEmpty v-else></myEmpty>
 		</Card>
 	</div>
 </template>
 
 <script>
 import Card from './card.vue'
-import { API, starNoteList } from '@/api'
+import { API, starNoteList, deleteOne } from '@/api'
 import { mapGetters, mapMutations } from 'vuex'
 import * as types from '@/store/mutation_types'
-import { notEmpty, file_url } from '@/utils'
+import { notEmpty, file_url, handleMsg } from '@/utils'
 export default {
 	props: ['user', 'userlist'],
 	components: {
@@ -51,13 +56,21 @@ export default {
 		async getList() {
 			const { data } = await starNoteList({ id: this.user.id })
 			this.list = data.map((i) => {
-				const author = this.findUserById(i.userId)
-				return { ...i, author }
+				const pwd = Object.entries(i)
+				const [key, value] = pwd[0]
+				const author = this.findUserById(i.id)
+				return { ...value, key, author }
 			})
 		},
 		gotoDetail(i) {
 			this.$router.push({ name: 'pArticle', params: { id: i.id } })
 			this[types.SET_CURRENT_POST](i)
+		},
+		async handleStar(i) {
+			const { success, message } = await deleteOne(API.FOCUSON, { id: i.key })
+			handleMsg(success, message, () => {
+				this.getList()
+			})
 		}
 	},
 	mounted() {

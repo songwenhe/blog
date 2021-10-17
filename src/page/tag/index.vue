@@ -34,8 +34,8 @@ export default {
 
 	methods: {
 		async getList() {
-			const res = await getTagById({ id: this.id })
-			console.log(res)
+			const res = await getTagById({ tagsId: this.id })
+			this.list = res
 		}
 	}
 }

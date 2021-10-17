@@ -171,7 +171,9 @@ export default {
 			isFocus: false,
 			focusText: '关注',
 			starInfo: {},
-			notes: []
+			notes: [],
+			starInfo: {},
+			focusInfo: {}
 		}
 	},
 	components: {
@@ -279,33 +281,60 @@ export default {
 					this.fetchStarNoteList()
 				})
 			} else {
-				const res = await deleteOne(API.FOCUSON, { id })
+				const { success, message } = await deleteOne(API.FOCUSON, {
+					id: this.starInfo.key
+				})
+				handleMsg(success, message, () => {
+					this.fetchStarNoteList()
+				})
 			}
 		},
 		async fetchStarNoteList() {
 			const { data } = await starNoteList({ id: this.userId })
-			this.isStar = data.findIndex((i) => i.id === this.id) !== -1
+			const payload = data.map((i) => {
+				const pwd = Object.entries(i)
+				const [key, value] = pwd[0]
+				const author = this.getUserById(i.id)
+				console.log({ ...value, key, author })
+				return { ...value, key, author }
+			})
+			this.starInfo = payload.find((i) => i.id === this.id)
+			this.isStar = payload.findIndex((i) => i.id === this.id) !== -1
 		},
 		async fetchStarUserList() {
 			const { data } = await starUserList({ id: this.userId })
 			console.log(`data`, data)
+			const payload = data.map((i) => {
+				const pwd = Object.entries(i)
+				const [key, value] = pwd[0]
+				return { key, ...value }
+			})
+			this.focusInfo = payload.find((i) => i.id === this.currentPost.userId)
 			this.isFocus =
-				data.findIndex((i) => i.id === this.currentPost.userId) !== -1
+				payload.findIndex((i) => i.id === this.currentPost.userId) !== -1
 		},
 		async focusUser() {
-			if (this.currentPost.userId === this.userId) {
-				return this.$message.error('不能关注自己')
+			if (this.isFocus) {
+				const { success, message } = await deleteOne(API.FOCUSON, {
+					id: this.focusInfo.key
+				})
+				handleMsg(success, message, () => {
+					this.fetchStarUserList()
+				})
+			} else {
+				if (this.currentPost.userId === this.userId) {
+					return this.$message.error('不能关注自己')
+				}
+				const { success, message } = await insertOne(API.FOCUSON, {
+					createTime: new Date(),
+					memberId: this.currentPost.userId,
+					type: 0,
+					userId: this.userId
+				})
+				handleMsg(success, message, () => {
+					this.fetchStarUserList()
+				})
 			}
-			const { success, message } = await insertOne(API.FOCUSON, {
-				createTime: new Date(),
-				memberId: this.currentPost.userId,
-				type: 0,
-				userId: this.userId
-			})
-			handleMsg(success, message, () => {
-				this.fetchStarUserList()
-			})
-			console.log(success, message)
 		},
 		async fetchNotes() {
 			const { data } = await getAllList(API.NOTE)

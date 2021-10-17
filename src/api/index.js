@@ -9,6 +9,7 @@ export const API = {
   LOG: 'apiLogs',
   REPLY: 'apiReply',
   TAG: 'apiNoteTags',
+  TAG_OPERATE: 'apiNotesTagsOperate',
   NOTE: 'apiNotes',
   LOG: 'apiLogs',
   CONFIG: 'apiSysConfig',
@@ -123,7 +124,6 @@ export function register (data) {
  */
 
 export function getTagById (params) {
-  console.log(params);
   return request({
     url: '/apiNotes/getListByTags',
     method: 'get',

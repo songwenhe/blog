@@ -31,8 +31,8 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="文章标签" prop="tag">
-					<el-select v-model="ruleForm.tag" multiple filterable allow-create
-						default-first-option placeholder="请选择文章标签" @change="tagChange" @keyup="keyup">
+					<el-select v-model="ruleForm.tag" multiple filterable default-first-option
+						placeholder="请选择文章标签" @change="tagChange" @keyup="keyup">
 						<el-option v-for="tag in tags" :key="tag.id" :label="tag.name"
 							:value="tag.id">
 						</el-option>
@@ -61,7 +61,7 @@
 
 <script>
 import wangEditor from 'wangeditor'
-import { notEmpty } from '@/utils'
+import { notEmpty, handleMsg } from '@/utils'
 import { aMixin } from '@/mixin'
 import { POST_STATE } from '@/utils/global'
 import { mapActions, mapGetters } from 'vuex'
@@ -135,15 +135,7 @@ export default {
 				tagId,
 				updateTime
 			}
-			this.handleTag.forEach((v) => {
-				// 				{
-				//   articleId:,
-				//   createTime:,
-				//   id: ,
-				//   tagId: ,
-				//   updateTime:
-				// }
-			})
+			this.handleTag.forEach((v) => {})
 		},
 		sendPost(status) {
 			this.$refs.ruleForm.validate(async (valid) => {
@@ -157,15 +149,28 @@ export default {
 					createTime: new Date(),
 					updateTime: new Date()
 				}
-				const { success, message } = await insertOne(API.NOTE, payload)
-				this.$message[success ? 'success' : 'error'](message)
+				const { success, message, data } = await insertOne(API.NOTE, payload)
+				handleMsg(success, message, () => {
+					this.sendTag(data)
+					this.$router.push({ name: 'pIndex' })
+				})
+				// this.$message[success ? 'success' : 'error'](message)
 				this.dialogVisible = false
 				this.handleTag()
-
-				if (success) {
-					this.$router.push({ name: 'pIndex' })
-				}
+				// if (success) {
+				// }
 			})
+		},
+		async sendTag(articleId) {
+			for (const tagId of this.tagArr) {
+				// console.log(tag)
+				const res = await insertOne(API.TAG_OPERATE, {
+					tagId,
+					createTime: new Date(),
+					articleId
+				})
+				console.log(res)
+			}
 		},
 		clearForm(formName) {
 			this.$refs[formName].resetFields()

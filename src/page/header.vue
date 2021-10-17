@@ -38,6 +38,12 @@
 					</div>
 				</ul>
 			</nav>
+			<div class="search-box">
+				<el-input placeholder="搜索文章..." v-model="keyword">
+					<i slot="suffix" class="fa fa-search" :class="{disabled:!isSearch}"
+						@click="search"></i>
+				</el-input>
+			</div>
 			<div class="login-box">
 				<div class="edit-post">
 					<button class="edit-btn" @click="goto"><i class="fa fa-edit"></i>写文章</button>
@@ -50,6 +56,8 @@
 					</span>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item command="info"><i class="fa fa-sign-out"></i>个人中心
+						</el-dropdown-item>
+						<el-dropdown-item command="home" v-if="isAuth"><i class="fa fa-home"></i>后台系统
 						</el-dropdown-item>
 						<el-dropdown-item command="logout"><i class="fa fa-user-o"></i>退出登录
 						</el-dropdown-item>
@@ -69,7 +77,8 @@ export default {
 	data() {
 		return {
 			activeIndex: '',
-			list: []
+			list: [],
+			keyword: ''
 		}
 	},
 
@@ -81,9 +90,13 @@ export default {
 			return nav.filter((i) => i.show)
 		},
 		fliterList() {
-			const parent = this.list.filter((i) => i.pid === null)
+			const parent = this.list.filter(
+				(i) => i.pid === null && i.available === 1
+			)
 			const all = parent.map((i) => {
-				const children = this.list.filter((j) => j.pid === i.id)
+				const children = this.list.filter(
+					(j) => j.pid === i.id && i.available === 1
+				)
 				return {
 					...i,
 					// hasChildren: children.length !== 0,
@@ -91,6 +104,12 @@ export default {
 				}
 			})
 			return all
+		},
+		isAuth() {
+			return this.currentUser.state === 1
+		},
+		isSearch() {
+			return this.keyword.trim().length > 0
 		}
 	},
 	methods: {
@@ -101,9 +120,18 @@ export default {
 			const { data } = await getAllList(API.NOTE_TYPE)
 			this.list = data
 		},
+
+		search() {
+			this.$router.push({
+				name: 'pSearch',
+				params: { id: this.keyword.trim() }
+			})
+		},
 		handleCommand(e) {
 			if (e === 'info') {
 				this.$router.push({ name: 'pInfo' })
+			} else if (e === 'home') {
+				this.$router.push({ name: 'Home' })
 			} else {
 				this.logout().then(() => {
 					this.$router.replace({ name: 'login' })
@@ -114,9 +142,7 @@ export default {
 			this.$router.push({ name: 'pPost' })
 		}
 	},
-	watch:{
-
-	},
+	watch: {},
 	mounted() {
 		this.getList()
 		console.log('this.$router :>> ', this.$router)
@@ -168,6 +194,46 @@ export default {
 			.nav-item_pMusic {
 				order: 1;
 			}
+		}
+	}
+	::v-deep.search-box {
+		padding-left: 20px;
+		display: flex;
+		align-items: center;
+		flex: 1;
+		.el-input__inner {
+			border-radius: 0;
+			height: 36px;
+			background-color: #fafafa;
+			&:focus {
+				border-color: $main-red;
+				background-color: #fff;
+			}
+		}
+		.el-input__suffix {
+			display: flex;
+			align-items: center;
+			.fa {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: 50%;
+
+				/* background-color: rgba($color: $main-red, $alpha: 0.6); */
+				font-size: 20px;
+				width: 30px;
+				height: 30px;
+				&:hover {
+					cursor: pointer;
+					transform: scale(1.1);
+				}
+				&::before {
+					color: $main-black;
+					margin-right: 0;
+				}
+			}
+			/* top: 50%; */
+			/* transform: translateY(-50%); */
 		}
 	}
 	.login-box {

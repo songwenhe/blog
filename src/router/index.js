@@ -222,6 +222,7 @@ export const constantRoutes = [
       {
         path: 'search/:id',
         name: 'pSearch',
+        props: true,
         component: () => import('@/page/search'),
         meta: { page: true }
       },
