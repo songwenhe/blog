@@ -21,6 +21,7 @@ export const API = {
 }
 export const API_OTHER = {
   STATISTICAL_TAGS: 'statisticalTags',
+  STATISTICAL_NOTES: 'statisticalNotes  ',
   STATISTICAL: 'statistical',
   NOTES_TOP_TEN: 'notesTopTen',
   NEW_NOTES: 'newNotes',
@@ -162,6 +163,13 @@ export function alipay (data) {
 export function notesLike (params) {
   return request({
     url: `/apiNotes/notesLike`,
+    method: 'get',
+    params
+  })
+}
+export function commentLike (params) {
+  return request({
+    url: `/apiComment/commentLike`,
     method: 'get',
     params
   })

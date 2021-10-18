@@ -3,6 +3,11 @@
 		<el-row :gutter="60" class="w">
 			<el-col :span="18" class="list">
 				<postList :list="list" @handle="gotoDetail"></postList>
+				<el-pagination @size-change="handleSizeChange"
+					@current-change="handleCurrentChange($event,getList)" class="t-pagination"
+					:current-page.sync="query.page" :page-size="query.size"
+					layout="prev, pager, next, jumper" :total="total" v-if="notEmpty(list)">
+				</el-pagination>
 			</el-col>
 			<el-col :span="6">
 				<Asider></Asider>
@@ -15,6 +20,7 @@
 import Asider from '@/page/components/asider.vue'
 import { API, getPageList } from '@/api'
 import { aMixin } from '@/mixin'
+import { notEmpty } from '@/utils'
 import postList from '@/page/components/postList.vue'
 import { mapMutations } from 'vuex'
 import * as types from '@/store/mutation_types'
@@ -39,10 +45,15 @@ export default {
 		}
 	},
 	methods: {
+		notEmpty,
 		...mapMutations('post', [types.SET_CURRENT_POST]),
 		async getList() {
-			const { list } = await getPageList(API.NOTE, { keyword: this.id })
+			const { list, total } = await getPageList(API.NOTE, {
+				keyword: this.id,
+				type: 2
+			})
 			this.list = list
+			this.total = total
 		},
 		gotoDetail(i) {
 			this[types.SET_CURRENT_POST](i)

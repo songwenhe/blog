@@ -1,5 +1,5 @@
 <template>
-	<div id="type-chart" style="width:100%;height:260px;"></div>
+	<div id="type-chart" style="width:100%;height:300px;"></div>
 </template>
 
 <script>
@@ -24,9 +24,9 @@ export default {
 			},
 			series: [
 				{
-					name: 'Access From',
+					name: '分类统计',
 					type: 'pie',
-					radius: ['40%', '70%'],
+					radius: ['30%', '50%'],
 					avoidLabelOverlap: false,
 					itemStyle: {
 						borderRadius: 10,

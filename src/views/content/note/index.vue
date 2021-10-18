@@ -1,7 +1,7 @@
 <template>
 	<el-card class="note">
-		<TableHeader @add="handleAdd" v-model="query.keyword" @search="getList"
-			@clear="getList" />
+		<TableHeader @add="handleAdd" :showLeft="false" v-model="query.keyword"
+			@search="getList" @clear="getList" />
 		<el-table v-loading="listLoading" :data="list" element-loading-text="Loading" border
 			ref="multipleTable" tooltip-effect="dark" style="width: 100%" fit
 			highlight-current-row>
@@ -52,7 +52,7 @@
 						</el-button>
 						<el-button slot="reference" class="t-btn" type="danger" icon="el-icon-delete"
 							@click="deleteById(row.id)">
-					</el-button>
+						</el-button>
 					</div>
 				</template>
 			</el-table-column>

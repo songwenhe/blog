@@ -1,6 +1,7 @@
 import { Message } from 'element-ui'
 import { IMG_URL, BASE_URL } from '@/utils/global'
 
+
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time
@@ -234,4 +235,24 @@ export function handleMsg (success, message, callback) {
 
 export function file_url (path) {
   return IMG_URL + path
+}
+
+export function copy (text) {
+  const ipt = document.createElement('input');
+  document.body.appendChild(ipt);
+  ipt.setAttribute('value', text);
+  ipt.select()
+  console.log(ipt);
+  try {
+    // 'document.execCommand' is deprecated
+    document.execCommand('copy');
+    Message({
+      message: '链接复制成功~',
+      center: true
+    })
+  } catch (error) {
+    console.log(error);
+  } finally {
+    document.body.removeChild(ipt)
+  }
 }

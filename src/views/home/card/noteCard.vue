@@ -4,17 +4,17 @@
 			<li class="note-item"></li>
 		</ul> -->
 		<el-row class="note-header">
-			<el-col :span="16">笔记标题</el-col>
+			<el-col :span="14">笔记标题</el-col>
 			<!-- <el-col :span="4">笔记分类</el-col> -->
 			<el-col :span="4">浏览数</el-col>
-			<el-col :span="4">发布时间</el-col>
+			<el-col :span="6">发布时间</el-col>
 		</el-row>
 		<el-row v-for="i in list" class="note-item" :key="i.id">
-			<el-col :span="16"><span class="title" @click="gotoDetail(i)">{{i.title}}</span>
+			<el-col :span="14"><span class="title" @click="gotoDetail(i)">{{i.title}}</span>
 			</el-col>
 			<!-- <el-col :span="4"><span class="type">{{i.view}}</span></el-col> -->
 			<el-col :span="4"><span class="view">{{i.view || 0}}</span></el-col>
-			<el-col :span="4"><span class="date">{{i.createTime | formatDate}}</span></el-col>
+			<el-col :span="6"><span class="date">{{i.createTime | formatDate}}</span></el-col>
 		</el-row>
 	</div>
 </template>

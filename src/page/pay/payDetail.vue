@@ -13,9 +13,8 @@
 					<button class="btn" @click="pay">立即购买</button>
 				</div>
 			</div>
-			<div v-html="res"></div>
 		</div>
-		<div class=""></div>
+		<div class="alipay-box"></div>
 	</div>
 </template>
 
@@ -23,15 +22,14 @@
 import { mapGetters, mapActions } from 'vuex'
 import { file_url, hashID, notEmpty } from '@/utils'
 import * as type from '@/store/mutation_types'
-import { alipay } from '@/api'
+import { alipay, insertOne, API } from '@/api'
 export default {
+	props: ['id'],
 	data() {
-		return {
-			res: ''
-		}
+		return {}
 	},
 	computed: {
-		...mapGetters(['currentPost', 'userlist']),
+		...mapGetters(['currentPost', 'userlist', 'userId']),
 		currentUser() {
 			return this.userlist.find((i) => i.id === this.currentPost.userId)
 		}
@@ -44,30 +42,28 @@ export default {
 		notEmpty,
 		...mapActions('user', [type.FETCH_USER]),
 		async pay() {
-			const res = await alipay({
+			const html = await alipay({
 				out_trade_no: hashID(32),
 				total_amount: this.currentPost.price,
 				subject: 'sadsad'
 			})
-			this.res = res
-			this.$message.success('购买成功')
-			// window.open(
-			// 	'https://openapi.alipaydev.com/gateway.do?charset=utf-8&method=alipay.trade.wap.pay&sign=ViJodAaT9VBgJn4Y5Hswmb5fom8jZqn48%2FSIGUpC7PlXB1%2F6bYrQ65nSMMGkjqzVeyVHySxa5s6LGOYJwKUc3tAWct%2FUyqgK%2F%2BlferpNYlY7C56Sqg2zNSEnRxMPhQ1oIrMD7zLBUrejD%2BXiyiqGz09nmf003Rk72CKVDNvkyQo3lwxqCB%2BVCIvRH0oG3Mm%2F3jE8XtQbZ9uuEAHlz6ukboN0phtuzoiOx9SO86lcmK16QCqx3kK2xuoYpjJ7YIzcEZRaZLKn7wkDcpHXzk2j%2BcfK53%2BR%2BK0NbqVeyyqzkZBlGeylQCzOTVue%2BmBtJj97jUMx1VOWJt1slluFy3zqlg%3D%3D&version=1.0&app_id=2021000117618822&sign_type=RSA2&timestamp=2021-10-15+14%3A16%3A42&alipay_sdk=alipay-sdk-java-dynamicVersionNo&format=json'
-			// )
-			// const div = document.createElement('div')
-			// div.setAttribute('dangerouslySetInnerHTML', res)
-			// document.body.appendChild(div)
-			// var ifrm = document.createElement('iframe')
-			// // ifrm.setAttribute('src', 'http://google.com/')
-			// ifrm.innerHTML = res
-			// ifrm.style.width = '100px'
-			// ifrm.style.height = '100px'
-			// document.body.appendChild(ifrm)
-			// this.$nextTick(() => {
-			// 	this.$refs.hidden.innerHTML = res
-			// })
-			// document.create
-			// document.body.innerHTML = res
+			// this.$message.success('购买成功')
+			const div = document.createElement('div')
+			div.innerHTML = html
+
+			document.body.appendChild(div)
+			const forms = document.forms
+			let len = forms.length - 1
+			document.forms[len].setAttribute('target', '_blank')
+			document.forms[len].submit()
+			document.body.removeChild(div)
+
+			const result = await insertOne(API.FOCUSON, {
+				createTime: new Date(),
+				memberId: this.id,
+				type: 2,
+				userId: this.userId
+			})
 		}
 	}
 }

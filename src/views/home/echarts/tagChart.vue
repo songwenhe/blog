@@ -1,11 +1,12 @@
 <template>
-	<div id="tag-chart"></div>
+	<div id="tag-chart" style="width:100%;height:300px;"></div>
 </template>
 
 <script>
 import * as echarts from 'echarts'
 
 export default {
+	props: ['data'],
 	data() {
 		return {
 			// key: value
@@ -15,38 +16,39 @@ export default {
 		const chartDom = document.getElementById('tag-chart')
 		const myChart = echarts.init(chartDom)
 		const option = {
-			legend: {
-				top: 'bottom'
+			tooltip: {
+				trigger: 'item'
 			},
-			toolbox: {
-				show: true,
-				feature: {
-					mark: { show: true },
-					dataView: { show: true, readOnly: false },
-					restore: { show: true },
-					saveAsImage: { show: true }
-				}
+			legend: {
+				top: '5%',
+				left: 'center'
 			},
 			series: [
 				{
-					name: 'Nightingale Chart',
+					name: '分类统计',
 					type: 'pie',
-					radius: [50, 250],
-					center: ['50%', '50%'],
-					roseType: 'area',
+					radius: ['30%', '50%'],
+					avoidLabelOverlap: false,
 					itemStyle: {
-						borderRadius: 8
+						borderRadius: 10,
+						borderColor: '#fff',
+						borderWidth: 2
 					},
-					data: [
-						{ value: 40, name: 'rose 1' },
-						{ value: 38, name: 'rose 2' },
-						{ value: 32, name: 'rose 3' },
-						{ value: 30, name: 'rose 4' },
-						{ value: 28, name: 'rose 5' },
-						{ value: 26, name: 'rose 6' },
-						{ value: 22, name: 'rose 7' },
-						{ value: 18, name: 'rose 8' }
-					]
+					label: {
+						show: false,
+						position: 'center'
+					},
+					emphasis: {
+						label: {
+							show: true,
+							fontSize: '16',
+							fontWeight: 'bold'
+						}
+					},
+					labelLine: {
+						show: false
+					},
+					data: this.data
 				}
 			]
 		}

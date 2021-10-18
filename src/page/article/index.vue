@@ -37,11 +37,12 @@
 					<div class="tools">
 						<i class="fa fa-thumbs-o-up" :class="{like:isLike}" @click="likeArticle"></i>
 						<i class="fa fa-heart" :class="{star:isStar}" @click="starArticle"></i>
-						<i class="fa fa-share-alt"></i>
+						<i class="fa fa-share-alt" @click="share"></i>
 					</div>
 					<div class="note">
-						<p>所属分类：<span class="category">前端</span></p>
-						<p>本文标签：<span class="tag" v-for="i in 4">javascript</span></p>
+						<p v-if="notEmpty(currentType)">所属分类：<span class="category"
+								@click="gotoList(currentType.id)">{{currentType.name}}</span></p>
+						<!-- <p>本文标签：<span class="tag" v-for="i in 4">javascript</span></p> -->
 					</div>
 				</div>
 				<div class="footer">
@@ -118,7 +119,8 @@
 										</div>
 									</div>
 									<div class="footer">
-										<span class="fa fa-thumbs-o-up">赞(0)</span>
+										<span class="fa fa-thumbs-o-up"
+											@click="likeComment(i)">赞({{i.extend2 || 0}})</span>
 										<span class="fa fa-reply" @click="setCurrent(i)">回复</span>
 									</div>
 									<commentBox v-if="current === i" v-model="reply" :isReply="true"
@@ -151,10 +153,11 @@ import {
 	notesLike,
 	starNoteList,
 	starUserList,
-	getComment
+	getComment,
+	commentLike
 } from '@/api'
 import * as type from '@/store/mutation_types'
-import { notEmpty, handleMsg, file_url } from '@/utils'
+import { notEmpty, handleMsg, file_url, copy } from '@/utils'
 export default {
 	props: ['id'],
 	data() {
@@ -193,6 +196,9 @@ export default {
 			// console.log(i)
 			this.current = i
 		},
+		share() {
+			copy(window.location.href)
+		},
 		async fetchComment() {
 			const list = await getComment({ notesId: this.id })
 			this.commentList = list?.map((i) => {
@@ -209,6 +215,12 @@ export default {
 		},
 		getNoteTypeById(id) {
 			return this.noteTypeList.find((i) => i.id)
+		},
+		async likeComment({ id }) {
+			const { success, message } = await commentLike({ id })
+			handleMsg(success, message, () => {
+				this.fetchComment()
+			})
 		},
 		async addComment() {
 			const content = this.comment.trim()
@@ -290,6 +302,7 @@ export default {
 			}
 		},
 		async fetchStarNoteList() {
+			// todo star article
 			const { data } = await starNoteList({ id: this.userId })
 			const payload = data.map((i) => {
 				const pwd = Object.entries(i)
@@ -347,6 +360,9 @@ export default {
 		gotoDetail(i) {
 			this[type.SET_CURRENT_POST](i)
 			this.$router.push({ name: 'pArticle', params: { id: i.id } })
+		},
+		gotoList(id) {
+			this.$router.push({ name: 'pList', params: { id } })
 		}
 	},
 	computed: {
@@ -360,6 +376,9 @@ export default {
 		]),
 		currentAuthor() {
 			return this.getUserById(this.currentPost.userId)
+		},
+		currentType() {
+			return this.types.find((i) => i.id === this.currentPost.lx)
 		},
 		randNotes() {
 			const notes = this.notes.filter((i) => i.id !== this.id)

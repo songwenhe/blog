@@ -52,7 +52,7 @@
 		<el-row class="echarts-group" :gutter="30">
 			<el-col :span="12">
 				<div class="echarts-item">
-					<h3>笔记统计</h3>
+					<h3>分类统计</h3>
 					<typeChart :data="types" v-if="notEmpty(types)"></typeChart>
 					<myEmpty bg="transparent" v-else></myEmpty>
 				</div>
@@ -60,7 +60,7 @@
 			<el-col :span="12">
 				<div class="echarts-item">
 					<h3>标签统计</h3>
-					<tagChart v-if="false"></tagChart>
+					<tagChart v-if="notEmpty(tags)" :data='tags'></tagChart>
 					<myEmpty bg="transparent" v-else></myEmpty>
 				</div>
 			</el-col>
@@ -106,7 +106,8 @@ export default {
 	data() {
 		return {
 			info: {},
-			types: []
+			types: [],
+			tags: []
 		}
 	},
 	methods: {
@@ -126,11 +127,19 @@ export default {
 			// const notes = types.filter(i=>i.id==);
 			// console.log(object)
 			// this.types = data.map((i) => {})
+		},
+		async fetchTags() {
+			const { data } = await getOther(API_OTHER.STATISTICAL_TAGS)
+			this.tags = data.map((i) => {
+				console.log(i[i.tag_id])
+				return { name: i[i.tag_id], value: i.count }
+			})
 		}
 	},
 	mounted() {
 		this.fetchInfo()
 		this.fecthTypes()
+		this.fetchTags()
 	}
 }
 </script>

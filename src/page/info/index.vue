@@ -30,6 +30,9 @@
 				<el-tab-pane label="我的笔记" :lazy="true" name="myNote" key="myNote">
 					<myNote :id="user.id"></myNote>
 				</el-tab-pane>
+				<el-tab-pane label="购买记录" :lazy="true" name="myPay" key="myPay">
+					<myPay :id="user.id"></myPay>
+				</el-tab-pane>
 				<el-tab-pane label="收藏笔记" :lazy="true" name="starNote" key="starNote">
 					<starNote :user="user" :userlist="userlist"></starNote>
 				</el-tab-pane>
@@ -47,6 +50,7 @@ import setting from './setting'
 import myNote from './myNote'
 import payList from './payList'
 import starNote from './starNote'
+import myPay from './myPay'
 import myFollow from './myFollow'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { deepClone, file_url, handleMsg } from '@/utils'
@@ -60,11 +64,12 @@ export default {
 		myNote,
 		payList,
 		starNote,
-		myFollow
+		myFollow,
+		myPay
 	},
 	data() {
 		return {
-			activeTab: 'myFollow',
+			activeTab: 'myInfo',
 			BASE_URL,
 			user: {}
 		}

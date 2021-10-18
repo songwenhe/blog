@@ -8,7 +8,7 @@
 		</div>
 
 		<el-dialog title="发布文章" :visible.sync="dialogVisible" width="50%" class="post-dialog"
-			@close="clearForm('ruleForm')">
+			@close="clearForm('ruleForm')" key="sendPost">
 			<el-alert title="请勿发布涉及政治、广告、营销、翻墙、违反国家法律法规等内容" type="error" :closable="false" />
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px"
 				class="post-form">
@@ -52,7 +52,7 @@
 			</el-form>
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="dialogVisible = false">取 消</el-button>
-				<el-button type="success" @click="sendPost(0)">保存草稿</el-button>
+				<!-- <el-button type="success" @click="sendPost(0)">保存草稿</el-button> -->
 				<el-button type="primary" @click="sendPost(1)">发布文章</el-button>
 			</span>
 		</el-dialog>

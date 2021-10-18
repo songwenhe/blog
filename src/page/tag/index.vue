@@ -3,6 +3,11 @@
 		<el-row :gutter="60" class="w">
 			<el-col :span="18" class="list">
 				<postList :list="list"></postList>
+				<el-pagination @size-change="handleSizeChange"
+					@current-change="handleCurrentChange($event,getList)" class="t-pagination"
+					:current-page.sync="query.page" :page-size="query.size"
+					layout="prev, pager, next, jumper" :total="total" v-if="notEmpty(list)">
+				</el-pagination>
 			</el-col>
 			<el-col :span="6">
 				<Asider></Asider>
@@ -14,6 +19,7 @@
 <script>
 import Asider from '@/page/components/asider.vue'
 import { API, getTagById } from '@/api'
+import { notEmpty } from '@/utils'
 import { aMixin } from '@/mixin'
 import postList from '@/page/components/postList.vue'
 export default {
@@ -31,8 +37,13 @@ export default {
 	mounted() {
 		this.getList()
 	},
-
+	watch: {
+		id() {
+			this.getList()
+		}
+	},
 	methods: {
+		notEmpty,
 		async getList() {
 			const res = await getTagById({ tagsId: this.id })
 			this.list = res

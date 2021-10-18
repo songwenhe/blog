@@ -183,6 +183,7 @@ export const constantRoutes = [
       {
         path: 'pay/:id',
         name: 'pPayDetail',
+        props: true,
         component: () => import('@/page/pay/payDetail'),
         meta: { page: true }
       },
