@@ -200,14 +200,14 @@ export default {
 	.title-ipt {
 		margin-bottom: 1rem;
 	}
-	::v-deep .editor {
+	/* ::v-deep .editor {
 		.w-e-toolbar {
 			z-index: 1 !important;
 		}
 		.w-e-text-container {
 			z-index: 2 !important;
 		}
-	}
+	} */
 	.btn {
 		margin-top: 1rem;
 		cursor: pointer;
