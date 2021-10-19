@@ -303,7 +303,7 @@ export default {
 		},
 		async fetchStarNoteList() {
 			// todo star article
-			const { data } = await starNoteList({ id: this.userId })
+			const { data } = await starNoteList({ id: this.userId, type: 1 })
 			const payload = data.map((i) => {
 				const pwd = Object.entries(i)
 				const [key, value] = pwd[0]

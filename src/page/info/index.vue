@@ -30,7 +30,7 @@
 				<el-tab-pane label="我的笔记" :lazy="true" name="myNote" key="myNote">
 					<myNote :id="user.id"></myNote>
 				</el-tab-pane>
-				<el-tab-pane label="购买记录" :lazy="true" name="myPay" key="myPay">
+				<el-tab-pane label="我的购买" :lazy="true" name="myPay" key="myPay">
 					<myPay :id="user.id"></myPay>
 				</el-tab-pane>
 				<el-tab-pane label="收藏笔记" :lazy="true" name="starNote" key="starNote">

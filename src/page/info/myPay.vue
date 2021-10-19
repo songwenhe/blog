@@ -1,6 +1,6 @@
 <template>
 	<div class="my-note">
-		<Card title="购买记录">
+		<Card title="我的购买">
 			<div class="note-tabpane">
 				<template v-if="notEmpty(list)">
 					<div class="note-brief" v-for="i in list" :key="i.id">

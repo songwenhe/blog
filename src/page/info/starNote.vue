@@ -54,7 +54,7 @@ export default {
 			return this[`user/${types.GET_USER}`](id)
 		},
 		async getList() {
-			const { data } = await starNoteList({ id: this.user.id })
+			const { data } = await starNoteList({ id: this.user.id, type: 1 })
 			this.list = data.map((i) => {
 				const pwd = Object.entries(i)
 				const [key, value] = pwd[0]
