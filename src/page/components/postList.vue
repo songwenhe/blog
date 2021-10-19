@@ -14,6 +14,8 @@
 						<div class="date"><i class="fa fa-clock-o"></i>{{i.createTime | formatDate}}
 						</div>
 						<div class="view"><i class="fa fa-eye"></i>浏览({{i.view || 0}})</div>
+						<div class="view"><i class="fa fa-thumbs-o-up"></i>点赞({{i.likeNum || 0}})
+						</div>
 						<div class="comment"><i class="fa fa-commenting-o"></i>评论({{i.replyNum || 0}})
 						</div>
 					</div>

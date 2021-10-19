@@ -18,7 +18,7 @@
 
 <script>
 import Asider from '@/page/components/asider.vue'
-import { API, getPageList } from '@/api'
+import { API, getPageList, getListByType } from '@/api'
 import { aMixin } from '@/mixin'
 import { notEmpty } from '@/utils'
 import postList from '@/page/components/postList.vue'
@@ -48,9 +48,10 @@ export default {
 		notEmpty,
 		...mapMutations('post', [types.SET_CURRENT_POST]),
 		async getList() {
-			const { list, total } = await getPageList(API.NOTE, {
-				keyword: this.id,
-				type: 2
+			const { list, total } = await getListByType({
+				lx: this.id,
+				type: 2,
+				...this.query
 			})
 			this.list = list
 			this.total = total

@@ -11,8 +11,8 @@
 							<span class="fa fa-star" @click="handleStar(i)">已收藏</span>
 							<span class="fa fa-user"
 								v-if="notEmpty(i.author)">{{i.author.userName}}</span>
-							<span class=" fa fa-eye">浏览({{i.view || 0}})</span><span
-								class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
+							<span class=" fa fa-eye">浏览({{i.view || 0}})</span>
+							<span class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
 							<span class="fa fa-thumbs-o-up">点赞({{i.likeNum || 0}})</span>
 						</div>
 					</div>

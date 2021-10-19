@@ -12,8 +12,8 @@
 		<el-row v-for="i in list" class="note-item" :key="i.id">
 			<el-col :span="14"><span class="title" @click="gotoDetail(i)">{{i.title}}</span>
 			</el-col>
-			<!-- <el-col :span="4"><span class="type">{{i.view}}</span></el-col> -->
-			<el-col :span="4"><span class="view">{{i.view || 0}}</span></el-col>
+			<el-col :span="4"><span class="type">{{i.view}}</span></el-col>
+			<!-- <el-col :span="4"><span class="view">{{i.likeNum || 0}}</span></el-col> -->
 			<el-col :span="6"><span class="date">{{i.createTime | formatDate}}</span></el-col>
 		</el-row>
 	</div>

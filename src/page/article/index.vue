@@ -3,7 +3,6 @@
 		<el-row :gutter="60" class="w">
 			<el-col :span="18" class="detail">
 				<div class="main">
-
 					<div class="content">
 						<h1 class="title">{{currentPost.title}}</h1>
 						<div class="top-info">
@@ -23,6 +22,9 @@
 											class="fa fa-clock-o"></i>{{currentPost.createTime | formatDate}}
 									</div>
 									<div class="view"><i class="fa fa-eye"></i>浏览({{currentPost.view || 0}})
+									</div>
+									<div class="view"><i
+											class="fa fa-thumbs-o-up"></i>点赞({{currentPost.likeNum || 0}})
 									</div>
 									<div class="comment"><i
 											class="fa fa-commenting-o"></i>评论({{currentPost.replyNum || 0}})
@@ -66,8 +68,9 @@
 								<div class="info">
 									<div class="title" @click="gotoDetail(i)">{{i.title}}</div>
 									<div class="other">
-										<span class="fa fa-eye">浏览({{i.view || 0}})</span><span
-											class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
+										<span class="fa fa-eye">浏览({{i.view || 0}})</span>
+										<span class="fa fa-thumbs-o-up">点赞({{i.likeNum || 0}})</span>
+										<span class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
 									</div>
 								</div>
 							</li>
@@ -148,13 +151,15 @@ import {
 	API,
 	deleteOne,
 	getAllList,
+	getById,
 	getPageList,
 	insertOne,
 	notesLike,
 	starNoteList,
 	starUserList,
 	getComment,
-	commentLike
+	commentLike,
+	addViews
 } from '@/api'
 import * as type from '@/store/mutation_types'
 import { notEmpty, handleMsg, file_url, copy } from '@/utils'
@@ -277,8 +282,13 @@ export default {
 			})
 		},
 		async likeArticle() {
+			if (this.isLike) return this.$message.warning('点赞太频繁了 ~ ~')
 			const { success, message } = await notesLike({ id: this.currentPost.id })
-			handleMsg(success, message)
+			handleMsg(success, message, () => {
+				this.updateArticle()
+				// const { data } = await getById(API.NOTE, { id: this.currentPost.id })
+				// this[type.SET_CURRENT_POST](data)
+			})
 			this.isLike = success
 		},
 		async starArticle() {
@@ -363,6 +373,29 @@ export default {
 		},
 		gotoList(id) {
 			this.$router.push({ name: 'pList', params: { id } })
+		},
+		async readOver() {
+			const { success } = await addViews({ id: this.currentPost.id })
+			window.removeEventListener('scroll', this.handleScroll)
+			success && this.updateArticle()
+		},
+		handleScroll() {
+			const ele = document.documentElement
+			const body = document.body
+			// 距离顶部距离
+			const scrollTop = ele.scrollTop || body.scrollTop
+			// 可视区高度
+			const windowHeight = ele.clientHeight || body.clientHeight
+			// 滚动条总高度
+			const scrollHeight = ele.scrollHeight || body.scrollHeight
+			if (scrollTop + windowHeight == scrollHeight) {
+				this.readOver()
+				console.log('到了底部')
+			}
+		},
+		async updateArticle() {
+			const { data } = await getById(API.NOTE, { id: this.currentPost.id })
+			this[type.SET_CURRENT_POST](data)
 		}
 	},
 	computed: {
@@ -385,7 +418,9 @@ export default {
 			return notes.slice(0, 8).sort(() => 0.5 - Math.random())
 		}
 	},
+
 	async mounted() {
+		window.addEventListener('scroll', this.handleScroll)
 		this.genarateTOC()
 		await this[type.FETCH_USER]()
 		this.fetchReply()

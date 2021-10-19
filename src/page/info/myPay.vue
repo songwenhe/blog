@@ -10,8 +10,8 @@
 							</h3>
 							<p>{{i.title}}</p>
 							<div class="other">
-								<span class="fa fa-eye">浏览({{i.view || 0}})</span><span
-									class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
+								<span class="fa fa-eye">浏览({{i.view || 0}})</span>
+								<span class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
 								<span class="fa fa-thumbs-o-up">点赞({{i.likeNum || 0}})</span>
 							</div>
 						</div>

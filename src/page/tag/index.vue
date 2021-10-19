@@ -2,7 +2,7 @@
 	<div class="plist">
 		<el-row :gutter="60" class="w">
 			<el-col :span="18" class="list">
-				<postList :list="list"></postList>
+				<postList :list="list" @handle="gotoDetail"></postList>
 				<el-pagination @size-change="handleSizeChange"
 					@current-change="handleCurrentChange($event,getList)" class="t-pagination"
 					:current-page.sync="query.page" :page-size="query.size"
@@ -22,6 +22,8 @@ import { API, getTagById } from '@/api'
 import { notEmpty } from '@/utils'
 import { aMixin } from '@/mixin'
 import postList from '@/page/components/postList.vue'
+import { mapMutations } from 'vuex'
+import * as types from '@/store/mutation_types'
 export default {
 	mixins: [aMixin],
 	props: ['id'],
@@ -44,9 +46,14 @@ export default {
 	},
 	methods: {
 		notEmpty,
+		...mapMutations('post', [types.SET_CURRENT_POST]),
 		async getList() {
 			const res = await getTagById({ tagsId: this.id })
 			this.list = res
+		},
+		gotoDetail(i) {
+			this[types.SET_CURRENT_POST](i)
+			this.$router.push({ name: 'pArticle', params: { id: i.id } })
 		}
 	}
 }

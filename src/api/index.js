@@ -214,3 +214,20 @@ export function getComment (params) {
     params
   })
 }
+
+export function addViews (params) {
+  return request({
+    url: `/apiNotes/addViews`,
+    method: 'get',
+    params
+  })
+}
+
+
+export function getListByType (params) {
+  return request({
+    url: `/apiNotes/selectNotesBylxAndType`,
+    method: 'get',
+    params
+  })
+}
