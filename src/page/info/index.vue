@@ -93,7 +93,10 @@ export default {
 		async handleAvatarSuccess(res, file) {
 			this.$set(this.user, 'fileUrl', res)
 			// this._avatar = res
-			const { success, message } = await editUser(this.user)
+			const { success, message } = await editUser({
+				id: this.user.id,
+				fileUrl: res
+			})
 			handleMsg(success, '', () => {
 				this.updateUser(this.user)
 			})

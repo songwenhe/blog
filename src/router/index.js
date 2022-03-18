@@ -95,13 +95,6 @@ export const constantRoutes = [
         component: () => import('@/views/content/tag'),
         meta: { title: '标签列表', icon: 'dashboard', actvieMenu: '/content/tag' }
       },
-      // {
-      //   path: 'file',
-      //   name: 'File',
-      //   component: () => import('@/views/content/file'),
-      //   meta: { title: '文件列表', icon: 'dashboard', actvieMenu: '/content/file' }
-      // },
-
     ]
   },
   {
