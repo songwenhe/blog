@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { register } from '@/api'
+import { register, validateUser } from '@/api'
 import { mapActions, mapMutations } from 'vuex'
 export default {
 	name: 'Login',
@@ -89,6 +89,22 @@ export default {
 				callback(new Error('两次输入密码不一致'))
 			} else {
 				callback()
+			}
+		}
+
+		const validateUsr = (rule, value, callback) => {
+			if (value?.length) {
+				validateUser({ userName: value })
+					.then(({ data }) => {
+						if (data == null) {
+							callback()
+						} else {
+							callback(new Error('用户已存在'))
+						}
+					})
+					.catch((err) => callback(new Error('服务繁忙')))
+			} else {
+				callback(new Error('请输入用户名'))
 			}
 		}
 		return {
@@ -111,9 +127,8 @@ export default {
 				]
 			},
 			registerRules: {
-				username: [
-					{ required: true, trigger: 'blur', message: '请输入用户名' }
-				],
+				username: [{ validator: validateUsr, trigger: 'blur' }],
+
 				oldPassword: [
 					{ required: true, trigger: 'blur', message: '请输入新密码' }
 				],

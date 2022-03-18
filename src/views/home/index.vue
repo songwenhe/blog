@@ -53,14 +53,14 @@
 			<el-col :span="12">
 				<div class="echarts-item">
 					<h3>分类统计</h3>
-					<typeChart :data="types" v-if="notEmpty(types)"></typeChart>
+					<typeChart :data="types" v-if="notEmpty(types)" ref="typesChart"></typeChart>
 					<myEmpty bg="transparent" v-else></myEmpty>
 				</div>
 			</el-col>
 			<el-col :span="12">
 				<div class="echarts-item">
 					<h3>标签统计</h3>
-					<tagChart v-if="notEmpty(tags)" :data='tags'></tagChart>
+					<tagChart v-if="notEmpty(tags)" :data='tags' ref="tagsChart"></tagChart>
 					<myEmpty bg="transparent" v-else></myEmpty>
 				</div>
 			</el-col>
@@ -107,7 +107,8 @@ export default {
 		return {
 			info: {},
 			types: [],
-			tags: []
+			tags: [],
+			timer: null
 		}
 	},
 	methods: {
@@ -130,16 +131,28 @@ export default {
 		},
 		async fetchTags() {
 			const { data } = await getOther(API_OTHER.STATISTICAL_TAGS)
-			this.tags = data.map((i) => {
-				console.log(i[i.tag_id])
-				return { name: i[i.tag_id], value: i.count }
-			})
+			console.log(data)
+			this.tags = data
+				.map((i) => {
+					return { name: i[i.tag_id], value: i.count }
+				})
+				.filter((i) => i.name)
 		}
 	},
 	mounted() {
 		this.fetchInfo()
 		this.fecthTypes()
 		this.fetchTags()
+		window.onresize = () => {
+			if (this.timer) {
+				clearTimeout(this.timer)
+			}
+			this.timer = setTimeout(() => {
+				this.$refs.typesChart.resize()
+				this.$refs.tagsChart.resize()
+				this.timer = null
+			}, 100)
+		}
 	}
 }
 </script>
@@ -212,7 +225,7 @@ export default {
 		padding: 10px;
 		background-color: #fff;
 		border-radius: 10px;
-		height: 320px;
+		height: 500px;
 	}
 }
 .info-group {

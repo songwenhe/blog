@@ -1,5 +1,5 @@
 <template>
-	<div id="tag-chart" style="width:100%;height:300px;"></div>
+	<div id="tag-chart" style="width:100%;height:460px;"></div>
 </template>
 
 <script>
@@ -10,11 +10,17 @@ export default {
 	data() {
 		return {
 			// key: value
+			myChart: null
+		}
+	},
+	methods: {
+		resize() {
+			this.myChart.resize()
 		}
 	},
 	mounted() {
 		const chartDom = document.getElementById('tag-chart')
-		const myChart = echarts.init(chartDom)
+		this.myChart = echarts.init(chartDom)
 		const option = {
 			tooltip: {
 				trigger: 'item'
@@ -52,7 +58,7 @@ export default {
 				}
 			]
 		}
-		option && myChart.setOption(option)
+		option && this.myChart.setOption(option)
 	}
 }
 </script>

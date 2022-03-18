@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'Note System',
+  title: '考研笔记分享系统',
 
   /**
    * @type {boolean} true | false

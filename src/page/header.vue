@@ -1,6 +1,9 @@
 <template>
 	<header class="header">
 		<div class="w">
+			<div class="logo">
+				考研笔记分享系统
+			</div>
 			<nav class="nav">
 				<ul class="nav-list">
 					<router-link :to="{name:i.name}" class="nav-item fa"
@@ -157,13 +160,22 @@ export default {
 	display: flex;
 	.w {
 		display: flex;
+		align-items: center;
+		.logo {
+			font-size: 24px;
+			color: indianred;
+			text-shadow: 3px 0px 1px #f2eaea4a;
+		}
 	}
 	.nav {
+		align-self: stretch;
+
 		.nav-list {
 			display: flex;
 			height: 100%;
 			/* .nav-item_ */
 			::v-deep.nav-item {
+				height: 100%;
 				min-width: 5.25rem;
 				cursor: pointer;
 				display: flex;
@@ -246,7 +258,7 @@ export default {
 		.edit-post {
 			display: flex;
 			align-items: center;
-			padding-right: 4rem;
+			padding: 0 10px;
 			.edit-btn {
 				width: 120px;
 				height: 36px;

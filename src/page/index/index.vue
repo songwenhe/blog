@@ -20,7 +20,7 @@
 import Asider from '@/page/components/asider.vue'
 import { API, getPageList } from '@/api'
 import { aMixin } from '@/mixin'
-import { mapMutations } from 'vuex'
+// import { mapMutations } from 'vuex'
 import { notEmpty } from '@/utils'
 import * as type from '@/store/mutation_types'
 import postList from '@/page/components/postList.vue'
@@ -41,7 +41,7 @@ export default {
 
 	methods: {
 		notEmpty,
-		...mapMutations('post', [type.SET_CURRENT_POST]),
+		// ...mapMutations('post', [type.SET_CURRENT_POST]),
 		async getList() {
 			const { total, list } = await getPageList(API.NOTE, {
 				...this.query,
@@ -52,7 +52,7 @@ export default {
 			console.log(this.list)
 		},
 		gotoDetail(i) {
-			this[type.SET_CURRENT_POST](i)
+			// this[type.SET_CURRENT_POST](i)
 			this.$router.push({ name: 'pArticle', params: { id: i.id } })
 		}
 	}

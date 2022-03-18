@@ -120,6 +120,14 @@ export function register (data) {
     data
   })
 }
+
+export function validateUser (params) {
+  return request({
+    url: '/apiUser/findUserByName',
+    method: 'get',
+    params
+  })
+}
 /**
  * tag
  */
@@ -179,15 +187,6 @@ export function commentLike (params) {
  * star
  */
 
-// export function likeNote (params) {
-//   return request({
-//     url: `/apiNotes/notesLike`,
-//     method: 'get',
-//     params
-//   })
-// }
-
-
 export function starNoteList (params) {
   return request({
     url: `/apiUser/findNotesById`,
@@ -231,3 +230,5 @@ export function getListByType (params) {
     params
   })
 }
+
+

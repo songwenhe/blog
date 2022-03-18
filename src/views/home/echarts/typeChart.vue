@@ -1,5 +1,5 @@
 <template>
-	<div id="type-chart" style="width:100%;height:300px;"></div>
+	<div id="type-chart" style="width:100%;height:460px;"></div>
 </template>
 
 <script>
@@ -8,12 +8,18 @@ import * as echarts from 'echarts'
 export default {
 	props: ['data'],
 	data() {
-		return {}
+		return {
+			myChart: null
+		}
+	},
+	methods: {
+		resize() {
+			this.myChart.resize()
+		}
 	},
 	mounted() {
 		const chartDom = document.getElementById('type-chart')
-		const myChart = echarts.init(chartDom)
-		console.log(myChart)
+		this.myChart = echarts.init(chartDom)
 		const option = {
 			tooltip: {
 				trigger: 'item'
@@ -40,7 +46,7 @@ export default {
 					emphasis: {
 						label: {
 							show: true,
-							fontSize: '20',
+							fontSize: '16',
 							fontWeight: 'bold'
 						}
 					},
@@ -51,7 +57,10 @@ export default {
 				}
 			]
 		}
-		option && myChart.setOption(option)
+		option && this.myChart.setOption(option)
+		// window.onresize = function () {
+		// 	myChart.resize({ animation: 500 })
+		// }
 	}
 }
 </script>

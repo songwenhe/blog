@@ -394,7 +394,7 @@ export default {
 			}
 		},
 		async updateArticle() {
-			const { data } = await getById(API.NOTE, { id: this.currentPost.id })
+			const { data } = await getById(API.NOTE, { id: this.id })
 			this[type.SET_CURRENT_POST](data)
 		}
 	},
@@ -421,6 +421,7 @@ export default {
 
 	async mounted() {
 		window.addEventListener('scroll', this.handleScroll)
+		this.updateArticle()
 		this.genarateTOC()
 		await this[type.FETCH_USER]()
 		this.fetchReply()

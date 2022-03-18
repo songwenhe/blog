@@ -32,7 +32,8 @@
 		</myCard>
 		<myCard title="近期评论" icon="fa-comment">
 			<ul class="comment">
-				<li class="comment-item" v-for="i in commentList" :key="i.id">
+				<li class="comment-item" v-for="i in commentList" :key="i.id"
+					@click="gotoArticle(i.notesId)">
 					<img :src="file_url(i.extend1)" alt="" class="img"
 						onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 					<span class="author">{{i.userId}} :</span>
@@ -42,8 +43,8 @@
 		</myCard>
 		<myCard title="近期笔记" icon="fa-book">
 			<ul class="note-list">
-				<li class="note-item" v-for="i in noteList" :key="i.id" @click="gotoArticle(i)"><i
-						class="fa fa-book"></i>{{i.title}}
+				<li class="note-item" v-for="i in noteList" :key="i.id"
+					@click="gotoArticle(i.id)"><i class="fa fa-book"></i>{{i.title}}
 				</li>
 			</ul>
 		</myCard>
@@ -95,9 +96,9 @@ export default {
 			const { data } = await getOther(API_OTHER.NEW_NOTES)
 			this.noteList = data
 		},
-		gotoArticle(item) {
-			this[type.SET_CURRENT_POST](item)
-			this.$router.push({ name: 'pArticle', params: { id: item.id } })
+		gotoArticle(id) {
+			// this[type.SET_CURRENT_POST](item)
+			this.$router.push({ name: 'pArticle', params: { id } })
 		}
 	},
 	computed: {
@@ -205,6 +206,9 @@ export default {
 				text-indent: 0.2em;
 				font-size: 14px;
 				color: $main-grey-dark;
+			}
+			&:hover {
+				cursor: pointer;
 			}
 		}
 	}
