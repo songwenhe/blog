@@ -7,8 +7,8 @@
 			<button class="btn" :class="isDisabled&&'disabled'" @click="showDialog">发布</button>
 		</div>
 
-		<el-dialog title="发布文章" :visible.sync="dialogVisible" width="50%" class="post-dialog"
-			@close="clearForm('ruleForm')" key="sendPost">
+		<el-dialog :title="isEdit?'修改文章':'发布文章'" :visible.sync="dialogVisible" width="50%"
+			class="post-dialog" @close="clearForm('ruleForm')" key="sendPost">
 			<el-alert title="请勿发布涉及政治、广告、营销、翻墙、违反国家法律法规等内容" type="error" :closable="false" />
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px"
 				class="post-form">
@@ -17,7 +17,8 @@
 						:show-file-list="false" :on-success="handleAvatarSuccess"
 						:before-upload="beforeAvatarUpload" name="files" :data="{owerId:userId}">
 						<img v-if="ruleForm.coverImage" :src="_url(ruleForm.coverImage)"
-							class="avatar">
+							class="avatar"
+							onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 					</el-upload>
 				</el-form-item>
@@ -66,7 +67,7 @@ import { aMixin } from '@/mixin'
 import { POST_STATE } from '@/utils/global'
 import { mapActions, mapGetters } from 'vuex'
 import * as type from '@/store/mutation_types'
-import { API, insertOne } from '@/api'
+import { API, insertOne, getById, editOne } from '@/api'
 export default {
 	data() {
 		return {
@@ -111,6 +112,9 @@ export default {
 					children
 				}
 			})
+		},
+		isEdit() {
+			return notEmpty(this.$route.query.id)
 		}
 	},
 	methods: {
@@ -155,14 +159,26 @@ export default {
 					createTime: new Date(),
 					updateTime: new Date()
 				}
-				const { success, message, data } = await insertOne(API.NOTE, payload)
-				handleMsg(success, message, () => {
-					this.sendTag(data)
-					this.$router.push({ name: 'pIndex' })
-				})
-				// this.$message[success ? 'success' : 'error'](message)
-				this.dialogVisible = false
-				this.handleTag()
+				if (!this.isEdit) {
+					const { success, message, data } = await insertOne(API.NOTE, payload)
+					handleMsg(success, message, () => {
+						this.sendTag(data)
+						this.$router.push({ name: 'pIndex' })
+					})
+					// this.$message[success ? 'success' : 'error'](message)
+					this.dialogVisible = false
+					this.handleTag()
+				} else {
+					const { success } = await editOne(API.NOTE, {
+						id: this.$route.query.id,
+						...this.ruleForm
+					})
+					handleMsg(success, '修改成功', () => {
+						this.$router.push({ name: 'pIndex' })
+					})
+					this.dialogVisible = false
+				}
+
 				// if (success) {
 				// }
 			})
@@ -183,9 +199,24 @@ export default {
 		},
 		keyup(e) {
 			console.log(e)
+		},
+		async fetchPost() {
+			if (this.isEdit) {
+				const { success, data } = await getById(API.NOTE, {
+					id: this.$route.query.id
+				})
+				this.title = data.title
+				this.editor.txt.html(data.htmlContent)
+				console.log(success, data)
+				this.ruleForm.coverImage = data.coverImage
+				this.ruleForm.lx = data.lx
+				this.ruleForm.type = data.type
+				this.ruleForm.price = data.price
+			}
 		}
 	},
 	mounted() {
+		this.fetchPost()
 		this[type.FETCH_TYPE]()
 		this[type.FETCH_TAG]()
 		const editor = new wangEditor('.editor')

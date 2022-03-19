@@ -62,7 +62,7 @@ export default {
 			return user?.userName ?? 'default'
 		},
 		gotoDetail(item) {
-			this[type.SET_CURRENT_POST](item)
+			// this[type.SET_CURRENT_POST](item)
 			this.$router.push({ name: 'pPayDetail', params: { id: item.id } })
 		}
 	}

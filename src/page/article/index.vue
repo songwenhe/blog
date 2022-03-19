@@ -4,7 +4,9 @@
 			<el-col :span="18" class="detail">
 				<div class="main">
 					<div class="content">
-						<h1 class="title">{{currentPost.title}}</h1>
+						<h1 class="title">{{currentPost.title}} <el-link type="primary"
+								:style="{fontSize:'20px'}" @click="editPost">编辑</el-link>
+						</h1>
 						<div class="top-info">
 							<div class="img-box">
 								<img :src="file_url(currentAuthor.fileUrl)" alt=""
@@ -353,7 +355,7 @@ export default {
 					this.fetchStarUserList()
 				})
 			} else {
-				if (this.currentPost.userId === this.userId) {
+				if (this.isAuthor) {
 					return this.$message.error('不能关注自己')
 				}
 				const { success, message } = await insertOne(API.FOCUSON, {
@@ -401,6 +403,10 @@ export default {
 		async updateArticle() {
 			const { data } = await getById(API.NOTE, { id: this.id })
 			this[type.SET_CURRENT_POST](data)
+		},
+
+		editPost() {
+			this.$router.push({ name: 'pPost', query: { id: this.currentPost.id } })
 		}
 	},
 	computed: {
@@ -423,6 +429,9 @@ export default {
 		},
 		isLogin() {
 			return notEmpty(this.currentUser)
+		},
+		isAuthor() {
+			return this.currentPost?.userId && this.currentPost.userId === this.userId
 		}
 	},
 

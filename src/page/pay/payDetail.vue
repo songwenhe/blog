@@ -5,8 +5,10 @@
 				<img :src="file_url(currentPost.coverImage)" alt=""
 					onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 			</div>
-			<div class="info" v-if="notEmpty(currentPost) && notEmpty(currentAuthor) ">
-				<h3 class="title">{{currentPost.title}}</h3>
+			<div class="info" v-if="notEmpty(currentPost) && notEmpty(currentAuthor)">
+				<h3 class="title">{{currentPost.title}} <el-link type="primary" @click="goto"
+						:style="{fontSize:'20px'}" v-if="isAuthor">编辑</el-link>
+				</h3>
 				<p class="author">讲师：{{currentAuthor.userName}}</p>
 				<p class="price"><i class="fa fa-jpy"></i>{{currentPost.price | toX}}</p>
 				<div class="btns">
@@ -35,6 +37,9 @@ export default {
 		},
 		isLogin() {
 			return notEmpty(this.currentUser)
+		},
+		isAuthor() {
+			return this.currentAuthor.id && this.currentAuthor.id === this.userId
 		}
 	},
 	mounted() {
@@ -44,9 +49,12 @@ export default {
 		file_url,
 		notEmpty,
 		...mapActions('user', [type.FETCH_USER]),
+		goto() {
+			this.$router.push({ name: 'pPost', query: { id: this.currentPost.id } })
+		},
 		async pay() {
 			if (!this.isLogin) return this.$message.error('请先登录!')
-
+			if (this.isAuthor) return this.$message.error('你是作者不能支付')
 			const html = await alipay({
 				out_trade_no: hashID(32),
 				total_amount: this.currentPost.price,

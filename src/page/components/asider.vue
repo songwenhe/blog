@@ -1,6 +1,6 @@
 <template>
 	<div class="asider">
-		<myCard title="关于我" icon="fa-user" v-if="">
+		<myCard title="关于我" icon="fa-user" v-if="isLogin">
 			<div class="about">
 				<div class="qr-code">
 					<img :src="file_url(currentUser.fileUrl)" alt=""
