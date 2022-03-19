@@ -23,7 +23,7 @@
 					<el-tag type="warning">{{getName(row.lx)}}</el-tag>
 				</template>
 			</el-table-column>
-			<el-table-column align="center" label="标记类型" min-width="95">
+			<el-table-column align="center" label="笔记类型" min-width="95">
 				<template v-slot={row}>
 					<el-tag :type="['danger','primary','success'][row.type]" effect="dark">
 						{{findStateById(row.type)}}
@@ -31,13 +31,19 @@
 				</template>
 
 			</el-table-column>
-			<el-table-column align="center" label="回复数量" min-width="95">
-				<template v-slot={row}>{{row.replyNum || 0}}</template>
+			<el-table-column align="center" label="统计" min-width="95">
+				<template v-slot={row}>
+					<p>评论： {{row.replyNum || 0}}</p>
+					<p>点赞： {{row.likeNum || 0}}</p>
+				</template>
 
 			</el-table-column>
-			<el-table-column align="center" label="点赞数量" min-width="95">
-				<template v-slot={row}>{{row.likeNum || 0}}</template>
-
+			<el-table-column align="center" label="笔记状态" min-width="95">
+				<template v-slot={row}>
+					<el-tag effect="dark" :type="['primary','success'][row.status]">
+						{{BASE_POST_STATE[row.status]}}
+					</el-tag>
+				</template>
 			</el-table-column>
 			<el-table-column align="center" label="创建时间" min-width="120">
 				<template v-slot={row}> {{row.createTime | formatDate}}
@@ -47,12 +53,17 @@
 			<el-table-column align="center" label="操作" min-width="100">
 				<template v-slot={row}>
 					<div class="t-btns">
-						<el-button class="t-btn" type="success" icon="el-icon-edit"
-							@click="editById(row)">
-						</el-button>
-						<el-button slot="reference" class="t-btn" type="danger" icon="el-icon-delete"
-							@click="deleteById(row.id)">
-						</el-button>
+						<template v-if="row.status === 0">
+							<el-link type="primary" @click="handleAudit(row,1)"
+								:style="{marginRight:'10px'}">
+								通过审核</el-link>
+						</template>
+						<template v-else>
+							<el-link type="success" @click="handleAudit(row,0)"
+								:style="{marginRight:'10px'}">
+								下架文章</el-link>
+						</template>
+						<el-link type="danger" @click="deleteById(row.id)">删除文章</el-link>
 					</div>
 				</template>
 			</el-table-column>
@@ -75,7 +86,7 @@ import {
 	API
 } from '@/api'
 import { aMixin } from '@/mixin'
-import { POST_STATE } from '@/utils/global'
+import { POST_STATE, BASE_POST_STATE } from '@/utils/global'
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import * as type from '@/store/mutation_types'
 export default {
@@ -84,7 +95,8 @@ export default {
 			list: [],
 			listLoading: false,
 			dialogFormVisible: false,
-			form: {}
+			form: {},
+			BASE_POST_STATE
 		}
 	},
 	mixins: [aMixin],
@@ -99,6 +111,14 @@ export default {
 		},
 		findStateById(type) {
 			return POST_STATE.find((i) => i.type === type)?.text ?? 'unkown'
+		},
+		async handleAudit(row, status) {
+			const { success } = await editOne(API.NOTE, {
+				id: row.id,
+				status
+			})
+			success && this.$message.success(['下架成功', '发布成功'][status])
+			success && this.getList()
 		},
 		async getList() {
 			this.listLoading = true

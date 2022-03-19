@@ -53,7 +53,7 @@
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="dialogVisible = false">取 消</el-button>
 				<!-- <el-button type="success" @click="sendPost(0)">保存草稿</el-button> -->
-				<el-button type="primary" @click="sendPost(1)">发布文章</el-button>
+				<el-button type="primary" @click="sendPost(0)">发布文章</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -73,7 +73,13 @@ export default {
 			title: '',
 			contentHtml: '',
 			dialogVisible: false,
-			ruleForm: {},
+			ruleForm: {
+				coverImage: '',
+				lx: '',
+				tag: '',
+				type: '',
+				price: ''
+			},
 			rules: {
 				coverImage: [
 					{ required: true, message: '请选择笔记封面', trigger: 'blur' }

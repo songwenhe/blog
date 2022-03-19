@@ -5,9 +5,9 @@
 				<img :src="file_url(currentPost.coverImage)" alt=""
 					onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 			</div>
-			<div class="info" v-if="notEmpty(currentPost) && notEmpty(currentUser) ">
+			<div class="info" v-if="notEmpty(currentPost) && notEmpty(currentAuthor) ">
 				<h3 class="title">{{currentPost.title}}</h3>
-				<p class="author">讲师：{{currentUser.userName}}</p>
+				<p class="author">讲师：{{currentAuthor.userName}}</p>
 				<p class="price"><i class="fa fa-jpy"></i>{{currentPost.price | toX}}</p>
 				<div class="btns">
 					<button class="btn" @click="pay">立即购买</button>
@@ -29,9 +29,12 @@ export default {
 		return {}
 	},
 	computed: {
-		...mapGetters(['currentPost', 'userlist', 'userId']),
-		currentUser() {
+		...mapGetters(['currentPost', 'userlist', 'userId', 'currentUser']),
+		currentAuthor() {
 			return this.userlist.find((i) => i.id === this.currentPost.userId)
+		},
+		isLogin() {
+			return notEmpty(this.currentUser)
 		}
 	},
 	mounted() {
@@ -42,6 +45,8 @@ export default {
 		notEmpty,
 		...mapActions('user', [type.FETCH_USER]),
 		async pay() {
+			if (!this.isLogin) return this.$message.error('请先登录!')
+
 			const html = await alipay({
 				out_trade_no: hashID(32),
 				total_amount: this.currentPost.price,

@@ -1,19 +1,43 @@
 <template>
 	<div class="my-follow">
-		<Card title="我的关注">
+		<Card :title="!showNotes?'我的关注':`${currentAuthor.userName}的笔记`">
+			<template #right>
+				<el-link type="primary" @click="back" v-if="showNotes">返回</el-link>
+			</template>
 			<template v-if="notEmpty(list)">
-				<ul class="star-list">
+				<ul class="star-list" v-if="!showNotes">
 					<li class="star-item" v-for="i in list" :key="i.id">
 						<img :src="file_url(i.fileUrl)" alt=""
 							onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
 						<div class="info">
-							<p class="author">{{i.userName}}</p>
+							<p class="author" @click="showOtherNote(i)">{{i.userName}}</p>
 							<p class="desc">{{i.description || '这个人太懒了'}}</p>
 						</div>
 						<button class="btn" @click="handleFocus(i)"><i
 								class="fa fa-star"></i>已关注</button>
 					</li>
 				</ul>
+				<template v-else>
+
+					<div class="note-brief" v-for="i in postList" :key="i.id">
+						<div class="brief-box">
+							<h3 @click="gotoDetail(i)">{{i.title}} <span class="fa fa-jpy"
+									v-if="i.type === 1">{{i.price}}</span>
+							</h3>
+							<p>{{i.title}}</p>
+							<div class="other">
+								<span class="fa fa-eye">浏览({{i.view || 0}})</span>
+								<span class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
+								<span class="fa fa-thumbs-o-up">点赞({{i.likeNum || 0}})</span>
+							</div>
+						</div>
+						<div class="cover-box">
+							<img src="http://www.bianbiangou.cn/index/ICON2.png" alt=""
+								@click="gotoDetail(i)">
+						</div>
+					</div>
+				</template>
+
 			</template>
 			<myEmpty v-else></myEmpty>
 		</Card>
@@ -22,7 +46,7 @@
 
 <script>
 import Card from './card.vue'
-import { API, starUserList, deleteOne } from '@/api'
+import { API, starUserList, deleteOne, findNotesByUserId } from '@/api'
 import { mapGetters } from 'vuex'
 import * as types from '@/store/mutation_types'
 import { notEmpty, file_url, handleMsg } from '@/utils'
@@ -33,7 +57,10 @@ export default {
 	},
 	data() {
 		return {
-			list: []
+			list: [],
+			showNotes: false,
+			currentAuthor: {},
+			postList: []
 		}
 	},
 	watch: {
@@ -53,15 +80,42 @@ export default {
 			})
 			// this.list = data
 		},
+		async fetchNotes() {
+			const { data } = await findNotesByUserId({
+				id: this.currentAuthor.id,
+				type: 2
+			})
+			this.postList = data
+		},
+		back() {
+			this.currentAuthor = {}
+			this.showNotes = false
+			this.fetchData()
+		},
+		showOtherNote(i) {
+			this.currentAuthor = i
+			this.showNotes = true
+			this.fetchData()
+		},
 		async handleFocus(i) {
 			const { success, message } = await deleteOne(API.FOCUSON, { id: i.key })
 			handleMsg(success, message, () => {
 				this.getList()
 			})
+		},
+		gotoDetail(i) {
+			this.$router.push({ name: 'pArticle', params: { id: i.id } })
+		},
+		fetchData() {
+			if (this.showNotes) {
+				this.fetchNotes()
+			} else {
+				this.getList()
+			}
 		}
 	},
 	mounted() {
-		this.getList()
+		this.fetchData()
 	}
 }
 </script>
@@ -103,6 +157,11 @@ export default {
 			.author {
 				font-size: 18px;
 				font-weight: 600;
+				&:hover {
+					cursor: pointer;
+					text-decoration: underline;
+					color: $main-blue;
+				}
 			}
 			.desc {
 				color: #8590a6;
@@ -110,6 +169,47 @@ export default {
 			}
 			p {
 				margin: 0;
+			}
+		}
+	}
+}
+
+.note-brief {
+	display: flex;
+	padding: 10px 0;
+	/* display: flex; */
+	flex: 1;
+	.brief-box {
+		flex: 1;
+		h3 {
+			color: #666;
+			font-size: 18px;
+			.fa-jpy {
+				margin-left: 20px;
+				color: $main-red;
+			}
+			&:hover {
+				cursor: pointer;
+				text-decoration: underline;
+			}
+		}
+		p {
+			font-size: 13px;
+			line-height: 24px;
+			color: #333;
+		}
+	}
+
+	.other {
+		span {
+			font-size: 13px;
+			color: #888;
+			margin-right: 12px;
+		}
+		.fa-star {
+			color: $main-red-dark;
+			&:hover {
+				cursor: pointer;
 			}
 		}
 	}

@@ -82,6 +82,7 @@ export function getUser (path, params) {
   })
 }
 
+
 export function editUser (data) {
   console.log(data);
   return request({
@@ -231,4 +232,16 @@ export function getListByType (params) {
   })
 }
 
+
+/**
+ * notes
+ */
+
+export function findNotesByUserId (path, params) {
+  return request({
+    url: `/apiUser/findNotesByUserId`,
+    method: 'get',
+    params
+  })
+}
 

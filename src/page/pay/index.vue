@@ -50,8 +50,9 @@ export default {
 		...mapActions('user', [type.FETCH_USER]),
 		async getPaylist() {
 			const { list, total } = await getPageList(API.NOTE, {
-				type: '1',
-				size: 999
+				type: 1,
+				size: 999,
+				status: 1
 			})
 			this.list = list
 			// console.log(res)

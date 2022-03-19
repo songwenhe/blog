@@ -48,27 +48,34 @@
 				</el-input>
 			</div>
 			<div class="login-box">
-				<div class="edit-post">
-					<button class="edit-btn" @click="goto"><i class="fa fa-edit"></i>写文章</button>
+				<template v-if="isLogin">
+					<div class="edit-post">
+						<button class="edit-btn" @click="goto"><i class="fa fa-edit"></i>写文章</button>
+					</div>
+					<el-dropdown trigger="click" class="login-dropdown" @command="handleCommand">
+						<span class="el-dropdown-link">
+							<img :src="file_url(currentUser.fileUrl)" alt="" class="login-avatar"
+								onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'"><i
+								class="el-icon-arrow-down el-icon--right"></i>
+						</span>
+						<el-dropdown-menu slot="dropdown">
+							<el-dropdown-item command="info"><i class="fa fa-sign-out"></i>个人中心
+							</el-dropdown-item>
+							<el-dropdown-item command="home" v-if="isAuth"><i
+									class="fa fa-home"></i>后台系统
+							</el-dropdown-item>
+							<el-dropdown-item command="logout"><i class="fa fa-user-o"></i>退出登录
+							</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
+				</template>
+				<div v-else>
+					<button class="login-btn" @click="gotoLogin">登录</button>
 				</div>
-				<el-dropdown trigger="click" class="login-dropdown" @command="handleCommand">
-					<span class="el-dropdown-link">
-						<img :src="file_url(currentUser.fileUrl)" alt="" class="login-avatar"
-							onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'"><i
-							class="el-icon-arrow-down el-icon--right"></i>
-					</span>
-					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="info"><i class="fa fa-sign-out"></i>个人中心
-						</el-dropdown-item>
-						<el-dropdown-item command="home" v-if="isAuth"><i class="fa fa-home"></i>后台系统
-						</el-dropdown-item>
-						<el-dropdown-item command="logout"><i class="fa fa-user-o"></i>退出登录
-						</el-dropdown-item>
-					</el-dropdown-menu>
-				</el-dropdown>
 			</div>
-			<!-- <div class="info">info</div> -->
+
 		</div>
+
 	</header>
 </template>
 
@@ -109,7 +116,10 @@ export default {
 			return all
 		},
 		isAuth() {
-			return this.currentUser.state === 1
+			return this.currentUser?.state === 1
+		},
+		isLogin() {
+			return notEmpty(this.currentUser)
 		},
 		isSearch() {
 			return this.keyword.trim().length > 0
@@ -137,12 +147,17 @@ export default {
 				this.$router.push({ name: 'Home' })
 			} else {
 				this.logout().then(() => {
-					this.$router.replace({ name: 'login' })
+					localStorage.clear()
+					location.reload()
+					// this.$router.replace({ name: 'login' })
 				})
 			}
 		},
 		goto() {
 			this.$router.push({ name: 'pPost' })
+		},
+		gotoLogin() {
+			this.$router.push({ name: 'logign' })
 		}
 	},
 	watch: {},
@@ -282,6 +297,19 @@ export default {
 			.login-avatar {
 				width: 36px;
 				height: 36px;
+			}
+		}
+		.login-btn {
+			width: 120px;
+			height: 36px;
+			background-color: transparent;
+			border: 1px solid $main-red;
+			outline: none;
+			color: $main-red;
+			&:hover {
+				color: $main-white;
+				cursor: pointer;
+				background-color: $main-red-dark;
 			}
 		}
 	}

@@ -41,9 +41,8 @@ export default {
 	methods: {
 		...mapMutations('post', [types.SET_CURRENT_POST]),
 		async getList() {
-			console.log(this.id)
 			const { list } = await getPageList(API.NOTE, { keyword: this.id })
-			this.list = list
+			this.list = list.filter((i) => i.status === 1 && i.type !== 0)
 		},
 		gotoDetail(i) {
 			this[types.SET_CURRENT_POST](i)

@@ -1,6 +1,6 @@
 <template>
 	<div class="asider">
-		<myCard title="关于我" icon="fa-user">
+		<myCard title="关于我" icon="fa-user" v-if="">
 			<div class="about">
 				<div class="qr-code">
 					<img :src="file_url(currentUser.fileUrl)" alt=""
@@ -94,7 +94,7 @@ export default {
 		},
 		async getLastNotes() {
 			const { data } = await getOther(API_OTHER.NEW_NOTES)
-			this.noteList = data
+			this.noteList = data.filter((i) => i.type === 2)
 		},
 		gotoArticle(id) {
 			// this[type.SET_CURRENT_POST](item)
@@ -102,7 +102,10 @@ export default {
 		}
 	},
 	computed: {
-		...mapGetters(['currentUser'])
+		...mapGetters(['currentUser']),
+		isLogin() {
+			return notEmpty(this.currentUser)
+		}
 	}
 }
 </script>

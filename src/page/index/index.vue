@@ -45,7 +45,8 @@ export default {
 		async getList() {
 			const { total, list } = await getPageList(API.NOTE, {
 				...this.query,
-				type: 2
+				type: 2,
+				status: 1
 			})
 			this.total = total
 			this.list = list

@@ -164,61 +164,61 @@ export const constantRoutes = [
         name: 'pIndex',
         component: () => import('@/page/index/index.vue'),
         show: true,
-        meta: { title: '首页', icon: 'fa-ravelry', actvieMenu: '/page/index', page: true }
+        meta: { title: '首页', icon: 'fa-ravelry', actvieMenu: '/page/index', page: true, notLogin: true }
       },
       {
         path: 'pay',
         name: 'pPay',
         component: () => import('@/page/pay'),
         show: true,
-        meta: { title: '付费专区', icon: 'fa-paypal', actvieMenu: '/page/pay', page: true }
+        meta: { title: '付费专区', icon: 'fa-paypal', actvieMenu: '/page/pay', page: true, notLogin: true }
       },
       {
         path: 'pay/:id',
         name: 'pPayDetail',
         props: true,
         component: () => import('@/page/pay/payDetail'),
-        meta: { page: true }
+        meta: { page: true, notLogin: true }
       },
       {
         path: 'post',
         name: 'pPost',
         component: () => import('@/page/post'),
-        meta: { page: true }
+        meta: { page: true, notLogin: true }
       },
       {
         path: 'info',
         name: 'pInfo',
         component: () => import('@/page/info'),
-        meta: { page: true }
+        meta: { page: true, notLogin: true }
       },
       {
         path: 'list/:id',
         name: 'pList',
         props: true,
         component: () => import('@/page/list'),
-        meta: { page: true }
+        meta: { page: true, notLogin: true }
       },
       {
         path: 'tag/:id',
         name: 'pTag',
         props: true,
         component: () => import('@/page/tag'),
-        meta: { page: true }
+        meta: { page: true, notLogin: true }
       },
       {
         path: 'article/:id',
         name: 'pArticle',
         component: () => import('@/page/article'),
         props: true,
-        meta: { page: true }
+        meta: { page: true, notLogin: true }
       },
       {
         path: 'search/:id',
         name: 'pSearch',
         props: true,
         component: () => import('@/page/search'),
-        meta: { page: true }
+        meta: { page: true, notLogin: true }
       },
     ],
   },

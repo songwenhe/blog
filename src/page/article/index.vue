@@ -48,16 +48,7 @@
 					</div>
 				</div>
 				<div class="footer">
-					<div class="goto" v-if="false">
-						<div class="pre">
-							<p><i class="fa fa-angle-left"></i>上一篇</p>
-							<p>阿斯顿萨达</p>
-						</div>
-						<div class="next">
-							<p>下一篇<i class="fa fa-angle-right"></i></p>
-							<p>阿斯顿萨达</p>
-						</div>
-					</div>
+
 					<myCard :shadow="false" title="热门推荐" class="hots" icon="fa-fire">
 						<ul class="hot-list">
 							<li class="hot-item" v-for="i in randNotes" :key="i.id">
@@ -73,14 +64,6 @@
 										<span class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
 									</div>
 								</div>
-							</li>
-						</ul>
-					</myCard>
-					<myCard :shadow="false" title="相关笔记" class="related" icon="fa-bookmark-o"
-						v-if="false">
-						<ul class="related-list">
-							<li class="related-item" v-for="i in 4">
-								<i class="fa fa-book"></i>132123
 							</li>
 						</ul>
 					</myCard>
@@ -189,6 +172,17 @@ export default {
 		myCard,
 		commentBox
 	},
+	watch: {
+		'$route.params.id'(newValue) {
+			this.updateArticle()
+			this.genarateTOC()
+			this.fetchReply()
+			this.fetchComment()
+			this.fetchStarNoteList()
+			this.fetchStarUserList()
+			this.fetchNotes()
+		}
+	},
 	methods: {
 		...mapActions({
 			[type.FETCH_USER]: `user/${type.FETCH_USER}`,
@@ -198,6 +192,8 @@ export default {
 		notEmpty,
 		file_url,
 		setCurrent(i) {
+			if (!this.isLogin) return this.$message.error('请先登录!')
+
 			// console.log(i)
 			this.current = i
 		},
@@ -222,12 +218,15 @@ export default {
 			return this.noteTypeList.find((i) => i.id)
 		},
 		async likeComment({ id }) {
+			if (!this.isLogin) return this.$message.error('请先登录!')
+
 			const { success, message } = await commentLike({ id })
 			handleMsg(success, message, () => {
 				this.fetchComment()
 			})
 		},
 		async addComment() {
+			if (!this.isLogin) return this.$message.error('请先登录!')
 			const content = this.comment.trim()
 			const payload = {
 				authorId: this.currentPost.userId,
@@ -282,6 +281,8 @@ export default {
 			})
 		},
 		async likeArticle() {
+			if (!this.isLogin) return this.$message.error('请先登录!')
+
 			if (this.isLike) return this.$message.warning('点赞太频繁了 ~ ~')
 			const { success, message } = await notesLike({ id: this.currentPost.id })
 			handleMsg(success, message, () => {
@@ -292,6 +293,8 @@ export default {
 			this.isLike = success
 		},
 		async starArticle() {
+			if (!this.isLogin) return this.$message.error('请先登录!')
+
 			if (this.isStar === false) {
 				const { success, message } = await insertOne(API.FOCUSON, {
 					createTime: new Date(),
@@ -312,6 +315,7 @@ export default {
 			}
 		},
 		async fetchStarNoteList() {
+			if (!this.isLogin) return
 			// todo star article
 			const { data } = await starNoteList({ id: this.userId, type: 1 })
 			const payload = data.map((i) => {
@@ -325,6 +329,8 @@ export default {
 			this.isStar = payload.findIndex((i) => i.id === this.id) !== -1
 		},
 		async fetchStarUserList() {
+			if (!this.isLogin) return
+
 			const { data } = await starUserList({ id: this.userId })
 			console.log(`data`, data)
 			const payload = data.map((i) => {
@@ -337,6 +343,8 @@ export default {
 				payload.findIndex((i) => i.id === this.currentPost.userId) !== -1
 		},
 		async focusUser() {
+			if (!this.isLogin) return this.$message.error('请先登录!')
+
 			if (this.isFocus) {
 				const { success, message } = await deleteOne(API.FOCUSON, {
 					id: this.focusInfo.key
@@ -361,12 +369,9 @@ export default {
 		},
 		async fetchNotes() {
 			const { data } = await getAllList(API.NOTE)
-			this.notes = data
+			this.notes = data.filter((i) => i.status === 1 && i.type === 2)
 		},
-		// randNotes(len = 8) {
-		// 	const notes = this.notes.filter((i) => i.id !== this.id)
-		// 	return notes.slice(0, len).sort(() => 0.5 - Math.random())
-		// },
+
 		gotoDetail(i) {
 			this[type.SET_CURRENT_POST](i)
 			this.$router.push({ name: 'pArticle', params: { id: i.id } })
@@ -414,8 +419,10 @@ export default {
 			return this.types.find((i) => i.id === this.currentPost.lx)
 		},
 		randNotes() {
-			const notes = this.notes.filter((i) => i.id !== this.id)
-			return notes.slice(0, 8).sort(() => 0.5 - Math.random())
+			return this.notes.slice(0, 8).sort(() => 0.5 - Math.random())
+		},
+		isLogin() {
+			return notEmpty(this.currentUser)
 		}
 	},
 

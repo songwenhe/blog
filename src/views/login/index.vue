@@ -173,10 +173,12 @@ export default {
 						.then(({ success, message, data }) => {
 							// success && this.$router.push({ path: this.redirect || '/' })
 							if (success) {
-								const isAuth = data.state === 1
-								isAuth
-									? this.$router.push({ name: 'Home' })
-									: this.$router.push({ name: 'pIndex' })
+								// const isAuth = data.state === 1
+								// isAuth
+								// 	? this.$router.push({ name: 'Home' })
+								// 	: this.$router.push({ name: 'pIndex' })
+
+								this.$router.push({ name: 'pIndex' })
 							}
 							// success && this.$router.push({ path: '/page' })
 							!success && message && this.$message.error({ message })
