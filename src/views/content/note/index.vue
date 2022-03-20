@@ -18,9 +18,9 @@
 				</template>
 			</el-table-column>
 
-			<el-table-column align="center" label="笔记分类" min-width="95">
+			<el-table-column align="center" label="笔记分类" min-width="120">
 				<template v-slot={row}>
-					<el-tag type="warning">{{getName(row.lx)}}</el-tag>
+					<el-tag type="primary">{{getName(row.lx)}}</el-tag>
 				</template>
 			</el-table-column>
 			<el-table-column align="center" label="笔记类型" min-width="95">
@@ -53,16 +53,8 @@
 			<el-table-column align="center" label="操作" min-width="100">
 				<template v-slot={row}>
 					<div class="t-btns">
-						<template v-if="row.status === 0">
-							<el-link type="primary" @click="handleAudit(row,1)"
-								:style="{marginRight:'10px'}">
-								通过审核</el-link>
-						</template>
-						<template v-else>
-							<el-link type="success" @click="handleAudit(row,0)"
-								:style="{marginRight:'10px'}">
-								下架文章</el-link>
-						</template>
+						<el-link type="primary" @click="handleNote(row)" style="marginRight:8px;">审核文章
+						</el-link>
 						<el-link type="danger" @click="deleteById(row.id)">删除文章</el-link>
 					</div>
 				</template>
@@ -73,6 +65,29 @@
 			:current-page.sync="query.page" :page-size="query.size"
 			layout="prev, pager, next, jumper" :total="total">
 		</el-pagination>
+		<el-dialog title="" width="30%" :visible.sync="dialogFormVisible"
+			:close-on-click-modal="false" custom-class="t-dialog">
+			<div class="note-box">
+				<h2 class="note-title">
+					{{currentPost.title}}
+				</h2>
+				<!-- <div class="notes-tool">
+					<el-tag type="primary">{{currentPost.lxName}}</el-tag>
+					<span>{{currentPost.createTime}}</span>
+				</div> -->
+				<div class="note-content" v-html="currentPost.htmlContent">
+
+				</div>
+
+			</div>
+			<div slot="footer" class="dialog-footer t-btns">
+				<el-button type="info" @click="dialogFormVisible = false" class="t-btn">取 消
+				</el-button>
+				<el-button type="success" @click="handleAudit" class="t-btn">
+					{{currentPost.status===0?'发 布':'下架'}}
+				</el-button>
+			</div>
+		</el-dialog>
 	</el-card>
 </template>
 
@@ -96,7 +111,8 @@ export default {
 			listLoading: false,
 			dialogFormVisible: false,
 			form: {},
-			BASE_POST_STATE
+			BASE_POST_STATE,
+			currentPost: {}
 		}
 	},
 	mixins: [aMixin],
@@ -112,13 +128,17 @@ export default {
 		findStateById(type) {
 			return POST_STATE.find((i) => i.type === type)?.text ?? 'unkown'
 		},
-		async handleAudit(row, status) {
+		async handleAudit() {
+			const status = this.currentPost.status === 0 ? 1 : 0
 			const { success } = await editOne(API.NOTE, {
-				id: row.id,
+				id: this.currentPost.id,
 				status
 			})
-			success && this.$message.success(['下架成功', '发布成功'][status])
-			success && this.getList()
+			if (success) {
+				this.$message.success(['下架成功', '发布成功'][status])
+				this.getList()
+			}
+			this.dialogFormVisible = false
 		},
 		async getList() {
 			this.listLoading = true
@@ -146,6 +166,12 @@ export default {
 		},
 		handleAdd() {
 			this.$router.push({ name: 'NoteDetail' })
+		},
+		handleNote(row) {
+			this.dialogFormVisible = true
+			// const lx = this[type.GET_TYPE](row.lx)
+			// this.currentPost = { ...row, lxName: lx.name }
+			this.currentPost = row
 		}
 	},
 	mounted() {
@@ -158,5 +184,23 @@ export default {
 <style lang="scss" scoped>
 .note {
 	/* background-color: #000; */
+	::v-deep.el-dialog {
+		.el-dialog__body {
+			padding: 0;
+		}
+	}
+	.note-box {
+		padding: 10px 20px;
+		.note-title {
+			margin: 0 0 10px;
+			font-size: 30px;
+		}
+		.note-content {
+			border-radius: 4px;
+			background-color: #f0f0f0;
+			border: 1px solid #f0f0f0;
+			padding: 10px;
+		}
+	}
 }
 </style>
