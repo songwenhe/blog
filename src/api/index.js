@@ -237,7 +237,7 @@ export function getListByType (params) {
  * notes
  */
 
-export function findNotesByUserId (path, params) {
+export function findNotesByUserId (params) {
   return request({
     url: `/apiUser/findNotesByUserId`,
     method: 'get',

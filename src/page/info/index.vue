@@ -1,46 +1,59 @@
 <template>
 	<div class="info">
-		<div class="top-banner">
-			<div class="brief">
-				<div class="img-box mask">
-					<img :src="file_url(user.fileUrl)" alt=""
-						onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
-					<el-upload class="icon" :action="BASE_URL+'file/uploadFile'"
-						:show-file-list="false" :on-success="handleAvatarSuccess"
-						:before-upload="beforeAvatarUpload" name="files" :data="{owerId:user.userId}">
-						<i class="fa fa-camera-retro"></i>
-						<p>修改我的头像</p>
-					</el-upload>
+		<template v-if="!only">
 
-				</div>
-				<div class="content ">
-					<span class="title">{{user.userName}}</span>
-					<span class="desc">{{user.description || '这个人太懒了，没有简介'}}</span>
+			<div class="top-banner">
+				<div class="brief">
+					<div class="img-box mask">
+						<img :src="file_url(user.fileUrl)" alt=""
+							onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
+						<el-upload class="icon" :action="BASE_URL+'file/uploadFile'"
+							:show-file-list="false" :on-success="handleAvatarSuccess"
+							:before-upload="beforeAvatarUpload" name="files"
+							:data="{owerId:user.userId}">
+							<i class="fa fa-camera-retro"></i>
+							<p>修改我的头像</p>
+						</el-upload>
+
+					</div>
+					<div class="content ">
+						<span class="title">{{user.userName}}</span>
+						<span class="desc">{{user.description || '这个人太懒了，没有简介'}}</span>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="bottom-container">
-			<el-tabs tab-position="left" class="my-tabs" v-model="activeTab">
-				<el-tab-pane label="个人资料" :lazy="true" name="myInfo" key="myInfo">
-					<myInfo :user="user" @updateUser="updateUser"></myInfo>
-				</el-tab-pane>
-				<el-tab-pane label="账号设置" :lazy="true" name="setting" key="setting">
-					<setting :user="user"></setting>
-				</el-tab-pane>
-				<el-tab-pane label="我的笔记" :lazy="true" name="myNote" key="myNote">
-					<myNote :id="user.id"></myNote>
-				</el-tab-pane>
-				<el-tab-pane label="我的购买" :lazy="true" name="myPay" key="myPay">
-					<myPay :id="user.id"></myPay>
-				</el-tab-pane>
-				<el-tab-pane label="收藏笔记" :lazy="true" name="starNote" key="starNote">
-					<starNote :user="user" :userlist="userlist"></starNote>
-				</el-tab-pane>
-				<el-tab-pane label="我的关注" :lazy="true" name="myFollow" key="myFollow">
-					<myFollow :user="user"></myFollow>
-				</el-tab-pane>
-			</el-tabs>
-		</div>
+			<div class="bottom-container">
+				<el-tabs tab-position="left" class="my-tabs" v-model="activeTab">
+					<el-tab-pane label="个人资料" :lazy="true" name="myInfo" key="myInfo">
+						<myInfo :user="user" @updateUser="updateUser"></myInfo>
+					</el-tab-pane>
+					<el-tab-pane label="账号设置" :lazy="true" name="setting" key="setting">
+						<setting :user="user"></setting>
+					</el-tab-pane>
+					<el-tab-pane label="我的笔记" :lazy="true" name="myNote" key="myNote">
+						<myNote :id="user.id"></myNote>
+					</el-tab-pane>
+					<el-tab-pane label="我的购买" :lazy="true" name="myPay" key="myPay">
+						<myPay :id="user.id"></myPay>
+					</el-tab-pane>
+					<el-tab-pane label="收藏笔记" :lazy="true" name="starNote" key="starNote">
+						<starNote :user="user" :userlist="userlist"></starNote>
+					</el-tab-pane>
+					<el-tab-pane label="我的关注" :lazy="true" name="myFollow" key="myFollow">
+						<myFollow :user="user"></myFollow>
+					</el-tab-pane>
+				</el-tabs>
+			</div>
+
+		</template>
+		<template v-else>
+			<div class="info-box">
+				<h1>{{user.userName}} <el-link type="primary" @click="back">我的信息</el-link>
+				</h1>
+				<myInfo :user="user" @updateUser="updateUser" :only="only"></myInfo>
+			</div>
+		</template>
+
 	</div>
 </template>
 
@@ -53,9 +66,9 @@ import starNote from './starNote'
 import myPay from './myPay'
 import myFollow from './myFollow'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import { deepClone, file_url, handleMsg } from '@/utils'
+import { deepClone, file_url, handleMsg, notEmpty } from '@/utils'
 import { BASE_URL } from '@/utils/global'
-import { API, editUser } from '@/api'
+import { API, editUser, getById } from '@/api'
 import * as types from '@/store/mutation_types'
 export default {
 	components: {
@@ -72,18 +85,27 @@ export default {
 			activeTab: 'myInfo',
 			BASE_URL,
 			user: {}
+			// only: false
 		}
 	},
 	computed: {
-		...mapGetters(['currentUser', 'userlist'])
+		...mapGetters(['currentUser', 'userlist', 'userId']),
+		id() {
+			return this.$route.query.id
+		},
+		only() {
+			return notEmpty(this.id)
+		}
 	},
 	mounted() {
-		this.user = deepClone(this.currentUser)
+		this.fetchUser()
 		this[types.FETCH_USER]()
 	},
 	watch: {
-		currentUser(val) {
-			this.user = deepClone(val)
+		'$route.query.id'(id) {
+			// if (notEmpty(id)) {
+			this.fetchUser()
+			// }
 		}
 	},
 	methods: {
@@ -104,7 +126,17 @@ export default {
 		updateUser(user) {
 			this[types.SET_CRTUSER](user)
 		},
-		beforeAvatarUpload() {}
+		beforeAvatarUpload() {},
+		async fetchUser() {
+			// if(this.userId)
+			let id = this.only ? this.id : this.userId
+			console.log(id)
+			const { data } = await getById(API.USER, { id })
+			this.user = data
+		},
+		back() {
+			this.$router.replace('/page/info')
+		}
 	}
 }
 </script>
@@ -225,5 +257,9 @@ export default {
 			}
 		}
 	}
+}
+
+.info-box {
+	padding: 10px;
 }
 </style>

@@ -32,8 +32,8 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="文章标签" prop="tag">
-					<el-select v-model="ruleForm.tag" multiple filterable default-first-option
-						placeholder="请选择文章标签" @change="tagChange" @keyup="keyup">
+					<el-select v-model="ruleForm.tag" placeholder="请选择文章标签" @change="tagChange"
+						@keyup="keyup">
 						<el-option v-for="tag in tags" :key="tag.id" :label="tag.name"
 							:value="tag.id">
 						</el-option>
@@ -54,7 +54,8 @@
 			<span slot="footer" class="dialog-footer">
 				<el-button @click="dialogVisible = false">取 消</el-button>
 				<!-- <el-button type="success" @click="sendPost(0)">保存草稿</el-button> -->
-				<el-button type="primary" @click="sendPost(0)">发布文章</el-button>
+				<el-button type="primary" @click="sendPost(0)">{{isEdit?'修改文章':'发布文章'}}
+				</el-button>
 			</span>
 		</el-dialog>
 	</div>
@@ -67,7 +68,8 @@ import { aMixin } from '@/mixin'
 import { POST_STATE } from '@/utils/global'
 import { mapActions, mapGetters } from 'vuex'
 import * as type from '@/store/mutation_types'
-import { API, insertOne, getById, editOne } from '@/api'
+import { API, insertOne, getById, editOne, getAllList, notesLike } from '@/api'
+import notePageVue from '@/views/content/note/notePage.vue'
 export default {
 	data() {
 		return {
@@ -91,7 +93,8 @@ export default {
 				price: [{ required: true, message: '请输入笔记价格', trigger: 'blur' }]
 			},
 			POST_STATE,
-			tagArr: []
+			tagId: '',
+			currentTag: {}
 		}
 	},
 	mixins: [aMixin],
@@ -130,7 +133,7 @@ export default {
 		// todo tag delete add
 		tagChange(e) {
 			// this.console.log(e)
-			this.tagArr = e
+			this.tagId = e
 		},
 		removeTag(e) {
 			console.log(e)
@@ -174,6 +177,7 @@ export default {
 						...this.ruleForm
 					})
 					handleMsg(success, '修改成功', () => {
+						this.sendTag(this.$route.query.id)
 						this.$router.push({ name: 'pIndex' })
 					})
 					this.dialogVisible = false
@@ -184,15 +188,36 @@ export default {
 			})
 		},
 		async sendTag(articleId) {
-			for (const tagId of this.tagArr) {
-				// console.log(tag)
+			// for (const tagId of this.tagId) {
+			// console.log(tag)
+			if (!this.isEdit) {
 				const res = await insertOne(API.TAG_OPERATE, {
-					tagId,
-					createTime: new Date(),
+					tagId: this.tagId,
+					createTime: Date.now(),
+					updateTime: Date.now(),
 					articleId
 				})
-				console.log(res)
+				console.log('添加成功')
+			} else {
+				console.log(notEmpty(this.currentTag))
+				// return
+				if (notEmpty(this.currentTag)) {
+					const res = await editOne(API.TAG_OPERATE, {
+						...this.currentTag,
+						tagId: this.tagId,
+						updateTime: Date.now()
+					})
+				} else {
+					const res = await insertOne(API.TAG_OPERATE, {
+						tagId: this.tagId,
+						createTime: Date.now(),
+						updateTime: Date.now(),
+						articleId
+					})
+				}
+				console.log('修改成功')
 			}
+			// }
 		},
 		clearForm(formName) {
 			this.$refs[formName].resetFields()
@@ -205,6 +230,7 @@ export default {
 				const { success, data } = await getById(API.NOTE, {
 					id: this.$route.query.id
 				})
+				// console.log(data)
 				this.title = data.title
 				this.editor.txt.html(data.htmlContent)
 				console.log(success, data)
@@ -212,11 +238,23 @@ export default {
 				this.ruleForm.lx = data.lx
 				this.ruleForm.type = data.type
 				this.ruleForm.price = data.price
+			} else {
+				this.ruleForm = {}
+			}
+		},
+		async fetchAllTag() {
+			if (this.isEdit) {
+				const { data } = await getAllList(API.TAG_OPERATE)
+				this.currentTag = data.find((i) => i.articleId === this.$route.query.id)
+				if (notEmpty(this.currentTag)) {
+					this.ruleForm.tag = this.currentTag.tagId
+				}
 			}
 		}
 	},
 	mounted() {
 		this.fetchPost()
+		this.fetchAllTag()
 		this[type.FETCH_TYPE]()
 		this[type.FETCH_TAG]()
 		const editor = new wangEditor('.editor')

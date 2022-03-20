@@ -24,14 +24,17 @@
 import { mapGetters, mapActions } from 'vuex'
 import { file_url, hashID, notEmpty } from '@/utils'
 import * as type from '@/store/mutation_types'
-import { alipay, insertOne, API } from '@/api'
+import { alipay, insertOne, API, getById, starNoteList } from '@/api'
 export default {
 	props: ['id'],
 	data() {
-		return {}
+		return {
+			currentPost: {},
+			isPurchase: false
+		}
 	},
 	computed: {
-		...mapGetters(['currentPost', 'userlist', 'userId', 'currentUser']),
+		...mapGetters(['userlist', 'userId', 'currentUser']),
 		currentAuthor() {
 			return this.userlist.find((i) => i.id === this.currentPost.userId)
 		},
@@ -43,6 +46,8 @@ export default {
 		}
 	},
 	mounted() {
+		this.fetchPost()
+		this.fetchMyOrder()
 		this[type.FETCH_USER]()
 	},
 	methods: {
@@ -52,9 +57,21 @@ export default {
 		goto() {
 			this.$router.push({ name: 'pPost', query: { id: this.currentPost.id } })
 		},
+		async fetchPost() {
+			const { data } = await getById(API.NOTE, { id: this.id })
+			this.currentPost = data
+		},
+		async fetchMyOrder() {
+			const { data } = await starNoteList({ id: this.userId, type: 2 })
+			const res = data.map((i) => Object.values(i)[0])
+			// const res = data?.find((i) => i.id === this.id)
+			// console.log(res)
+			this.isPurchase = res.findIndex((i) => i.id === this.id) !== -1
+		},
 		async pay() {
 			if (!this.isLogin) return this.$message.error('请先登录!')
-			if (this.isAuthor) return this.$message.error('你是作者不能支付')
+			if (this.isAuthor) return this.$message.error('不能购买自己文章')
+			if (this.isPurchase) return this.$message.error('不能重复购买')
 			const html = await alipay({
 				out_trade_no: hashID(32),
 				total_amount: this.currentPost.price,
@@ -77,6 +94,7 @@ export default {
 				type: 2,
 				userId: this.userId
 			})
+			this.fetchMyOrder()
 		}
 	}
 }

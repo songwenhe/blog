@@ -1,6 +1,6 @@
 <template>
 	<div class="my-info">
-		<Card title="个人资料">
+		<Card :title="only?'':'个人资料'">
 			<div class="left">
 				<el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="small"
 					label-width="80px" class="ruleForm">
@@ -8,23 +8,26 @@
 						<el-input v-model="ruleForm.userName" readonly></el-input>
 					</el-form-item>
 					<el-form-item label="电子邮箱" prop="email">
-						<el-input v-model="ruleForm.email"></el-input>
+						<el-input v-model="ruleForm.email" :disabled="only"></el-input>
 					</el-form-item>
 					<el-form-item label="手机号码" prop="phone">
-						<el-input v-model="ruleForm.phone"></el-input>
+						<el-input v-model="ruleForm.phone" :disabled="only"></el-input>
 					</el-form-item>
 					<el-form-item label="年龄" prop="age">
-						<el-input v-model="ruleForm.age" type="number"></el-input>
+						<el-input v-model="ruleForm.age" type="number" :disabled="only">
+						</el-input>
 					</el-form-item>
 					<el-form-item label="身份">
-						<el-tag :type="['','danger'][ruleForm.state]">{{['用户','管理员'][ruleForm.state]}}
+						<el-tag :type="['','danger'][ruleForm.state||0]">
+							{{['用户','管理员'][ruleForm.state||0]}}
 						</el-tag>
 					</el-form-item>
 					<el-form-item label="个人简介" prop="description">
-						<el-input type="textarea" v-model="ruleForm.description"></el-input>
+						<el-input type="textarea" v-model="ruleForm.description" :disabled="only">
+						</el-input>
 					</el-form-item>
 				</el-form>
-				<div class="btns">
+				<div class="btns" v-if="!only">
 					<button class="btn" @click="edit">保存修改</button>
 				</div>
 			</div>
@@ -48,7 +51,10 @@ import {
 import Card from './card.vue'
 import { editUser } from '@/api'
 export default {
-	props: ['user'],
+	props: {
+		user: { type: Object },
+		only: { type: Boolean, default: false }
+	},
 	components: {
 		Card
 	},

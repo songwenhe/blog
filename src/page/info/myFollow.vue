@@ -15,26 +15,31 @@
 						</div>
 						<button class="btn" @click="handleFocus(i)"><i
 								class="fa fa-star"></i>已关注</button>
+						<button class="btn sc" @click="gotoInfo(i.id)" style="marginLeft:10px;"><i
+								class="el-icon-user-solid" style="marginRight:2px"></i>Ta的信息</button>
 					</li>
 				</ul>
 				<template v-else>
+					<div class="note-list">
 
-					<div class="note-brief" v-for="i in postList" :key="i.id">
-						<div class="brief-box">
-							<h3 @click="gotoDetail(i)">{{i.title}} <span class="fa fa-jpy"
-									v-if="i.type === 1">{{i.price}}</span>
-							</h3>
-							<p>{{i.title}}</p>
-							<div class="other">
-								<span class="fa fa-eye">浏览({{i.view || 0}})</span>
-								<span class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
-								<span class="fa fa-thumbs-o-up">点赞({{i.likeNum || 0}})</span>
+						<div class="note-brief" v-for="i in list" :key="i.id">
+							<div class="brief-box">
+								<h3 @click="gotoDetail(i)">{{i.title}} <span class="fa fa-jpy"
+										v-if="i.type === 1">{{i.price}}</span>
+								</h3>
+								<p>{{i.title}}</p>
+								<div class="other">
+									<span class="fa fa-eye">浏览({{i.view || 0}})</span>
+									<span class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
+									<span class="fa fa-thumbs-o-up">点赞({{i.likeNum || 0}})</span>
+								</div>
+							</div>
+							<div class="cover-box">
+								<img src="http://www.bianbiangou.cn/index/ICON2.png" alt=""
+									@click="gotoDetail(i)">
 							</div>
 						</div>
-						<div class="cover-box">
-							<img src="http://www.bianbiangou.cn/index/ICON2.png" alt=""
-								@click="gotoDetail(i)">
-						</div>
+
 					</div>
 				</template>
 
@@ -59,8 +64,8 @@ export default {
 		return {
 			list: [],
 			showNotes: false,
-			currentAuthor: {},
-			postList: []
+			currentAuthor: {}
+			// postList: []
 		}
 	},
 	watch: {
@@ -82,10 +87,11 @@ export default {
 		},
 		async fetchNotes() {
 			const { data } = await findNotesByUserId({
-				id: this.currentAuthor.id,
+				userId: this.currentAuthor.id,
 				type: 2
 			})
-			this.postList = data
+			console.log(data)
+			this.list = data
 		},
 		back() {
 			this.currentAuthor = {}
@@ -112,6 +118,9 @@ export default {
 			} else {
 				this.getList()
 			}
+		},
+		gotoInfo(id) {
+			this.$router.push({ name: 'pInfo', query: { id } })
 		}
 	},
 	mounted() {
@@ -146,6 +155,10 @@ export default {
 				border-color: #06f;
 				background-color: #8590a6;
 			}
+			&.sc {
+				background-color: $main-green;
+				border-color: $main-green;
+			}
 		}
 		.info {
 			padding-left: 16px;
@@ -174,11 +187,16 @@ export default {
 	}
 }
 
+.note-list {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	width: 100%;
+}
 .note-brief {
 	display: flex;
 	padding: 10px 0;
-	/* display: flex; */
-	flex: 1;
+	width: 100%;
 	.brief-box {
 		flex: 1;
 		h3 {

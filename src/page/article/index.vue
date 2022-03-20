@@ -5,7 +5,7 @@
 				<div class="main">
 					<div class="content">
 						<h1 class="title">{{currentPost.title}} <el-link type="primary"
-								:style="{fontSize:'20px'}" @click="editPost">编辑</el-link>
+								:style="{fontSize:'20px'}" @click="editPost" v-if="isAuthor">编辑</el-link>
 						</h1>
 						<div class="top-info">
 							<div class="img-box">

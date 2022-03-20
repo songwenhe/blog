@@ -39,7 +39,7 @@ export default {
 	},
 	mounted() {
 		this[type.FETCH_USER]()
-		this.getPaylist()
+		this.getPayList()
 	},
 	computed: {
 		...mapGetters(['userlist', `user/${type.GET_USER}`])
@@ -48,7 +48,7 @@ export default {
 		file_url,
 		...mapMutations('post', [type.SET_CURRENT_POST]),
 		...mapActions('user', [type.FETCH_USER]),
-		async getPaylist() {
+		async getPayList() {
 			const { list, total } = await getPageList(API.NOTE, {
 				type: 1,
 				size: 999,

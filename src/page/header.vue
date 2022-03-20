@@ -1,9 +1,9 @@
 <template>
 	<header class="header">
 		<div class="w">
-			<div class="logo">
+			<!-- <div class="logo">
 				考研笔记分享系统
-			</div>
+			</div> -->
 			<nav class="nav">
 				<ul class="nav-list">
 					<router-link :to="{name:i.name}" class="nav-item fa"
@@ -148,8 +148,8 @@ export default {
 			} else {
 				this.logout().then(() => {
 					localStorage.clear()
-					location.reload()
-					// this.$router.replace({ name: 'login' })
+					// location.reload()
+					this.$router.replace('/')
 				})
 			}
 		},
