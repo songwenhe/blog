@@ -4,48 +4,63 @@
 			<el-col :span="18" class="detail">
 				<div class="main">
 					<div class="content">
-						<h1 class="title">{{currentPost.title}} <el-link type="primary"
-								:style="{fontSize:'20px'}" @click="editPost" v-if="isAuthor">编辑</el-link>
+						<h1 class="title">{{ currentPost.title }} <el-link
+							v-if="isAuthor"
+							type="primary"
+							:style="{fontSize:'20px'}"
+							@click="editPost"
+						>编辑</el-link>
 						</h1>
 						<div class="top-info">
 							<div class="img-box">
-								<img :src="file_url(currentAuthor.fileUrl)" alt=""
+								<img
 									v-if="notEmpty(currentAuthor)"
-									onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
+									:src="file_url(currentAuthor.fileUrl)"
+									alt=""
+									onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'"
+								>
 							</div>
-							<div class="info" v-if="notEmpty(currentAuthor)">
+							<div v-if="notEmpty(currentAuthor)" class="info">
 								<div class="author-info">
-									<span class="author">{{currentAuthor.userName}} </span>
-									<button class="btn" :class="{focus:isFocus}"
-										@click="focusUser">{{isFocus?'已关注':'关注Ta'}}</button>
+									<span class="author">{{ currentAuthor.userName }} </span>
+									<button
+										class="btn"
+										:class="{focus:isFocus}"
+										@click="focusUser"
+									>{{ isFocus?'已关注':'关注Ta' }}</button>
 								</div>
 								<div class="other">
 									<div class="date"><i
-											class="fa fa-clock-o"></i>{{currentPost.createTime | formatDate}}
+										class="fa fa-clock-o"
+									/>{{ currentPost.createTime | formatDate }}
 									</div>
-									<div class="view"><i class="fa fa-eye"></i>浏览({{currentPost.view || 0}})
+									<div class="view"><i class="fa fa-eye" />浏览({{ currentPost.view || 0 }})
 									</div>
 									<div class="view"><i
-											class="fa fa-thumbs-o-up"></i>点赞({{currentPost.likeNum || 0}})
+										class="fa fa-thumbs-o-up"
+									/>点赞({{ currentPost.likeNum || 0 }})
 									</div>
 									<div class="comment"><i
-											class="fa fa-commenting-o"></i>评论({{currentPost.replyNum || 0}})
+										class="fa fa-commenting-o"
+									/>评论({{ currentPost.replyNum || 0 }})
 									</div>
 								</div>
 							</div>
 
 						</div>
-						<div v-html="currentPost.htmlContent" class="html" v-hljs ref="html"></div>
+						<div ref="html" v-hljs class="html" v-html="currentPost.htmlContent" />
 					</div>
 					<el-divider>本文完</el-divider>
 					<div class="tools">
-						<i class="fa fa-thumbs-o-up" :class="{like:isLike}" @click="likeArticle"></i>
-						<i class="fa fa-heart" :class="{star:isStar}" @click="starArticle"></i>
-						<i class="fa fa-share-alt" @click="share"></i>
+						<i class="fa fa-thumbs-o-up" :class="{like:isLike}" @click="likeArticle" />
+						<i class="fa fa-heart" :class="{star:isStar}" @click="starArticle" />
+						<i class="fa fa-share-alt" @click="share" />
 					</div>
 					<div class="note">
-						<p v-if="notEmpty(currentType)">所属分类：<span class="category"
-								@click="gotoList(currentType.id)">{{currentType.name}}</span></p>
+						<p v-if="notEmpty(currentType)">所属分类：<span
+							class="category"
+							@click="gotoList(currentType.id)"
+						>{{ currentType.name }}</span></p>
 						<!-- <p>本文标签：<span class="tag" v-for="i in 4">javascript</span></p> -->
 					</div>
 				</div>
@@ -53,17 +68,20 @@
 
 					<myCard :shadow="false" title="热门推荐" class="hots" icon="fa-fire">
 						<ul class="hot-list">
-							<li class="hot-item" v-for="i in randNotes" :key="i.id">
+							<li v-for="i in randNotes" :key="i.id" class="hot-item">
 								<div class="cover">
-									<img :src="file_url(i.coverImage)" alt=""
-										onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
+									<img
+										:src="file_url(i.coverImage)"
+										alt=""
+										onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'"
+									>
 								</div>
 								<div class="info">
-									<div class="title" @click="gotoDetail(i)">{{i.title}}</div>
+									<div class="title" @click="gotoDetail(i)">{{ i.title }}</div>
 									<div class="other">
-										<span class="fa fa-eye">浏览({{i.view || 0}})</span>
-										<span class="fa fa-thumbs-o-up">点赞({{i.likeNum || 0}})</span>
-										<span class="fa fa-commenting-o">评论({{i.replyNum || 0}})</span>
+										<span class="fa fa-eye">浏览({{ i.view || 0 }})</span>
+										<span class="fa fa-thumbs-o-up">点赞({{ i.likeNum || 0 }})</span>
+										<span class="fa fa-commenting-o">评论({{ i.replyNum || 0 }})</span>
 									</div>
 								</div>
 							</li>
@@ -73,55 +91,72 @@
 						<commentBox v-model="comment" @handle="addComment" />
 						<div class="comment-list">
 							<h3 class="comment-title">全部评论
-								({{notEmpty(commentList)?commentList.length:0}})</h3>
+								({{ notEmpty(commentList)?commentList.length:0 }})</h3>
 							<template v-if="notEmpty(commentList)">
-								<div class="comment-item" v-for="i in commentList" :key="i.id">
+								<div v-for="i in commentList" :key="i.id" class="comment-item">
 									<div class="header">
-										<img :src="file_url(i.author.fileUrl)" alt=""
-											onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
+										<img
+											:src="file_url(i.author.fileUrl)"
+											alt=""
+											onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'"
+										>
 										<div class="info">
-											<span class="author">{{i.author.userName}}</span><span
-												class="date fa fa-clock-o">{{i.createTime | formatDate}}</span>
+											<span class="author">{{ i.author.userName }}</span><span
+												class="date fa fa-clock-o"
+											>{{ i.createTime | formatDate }}</span>
 										</div>
 									</div>
 									<div class="content">
 										<div class="reply">
 											<p class="reply-content fa">
-												{{i.content}}
+												{{ i.content }}
 											</p>
 											<ul class="reply-list">
-												<li class="reply-item" v-for="reply in getReplyById(i.id)"
-													:key="reply.id">
+												<li
+													v-for="reply in getReplyById(i.id)"
+													:key="reply.id"
+													class="reply-item"
+												>
 													<div class="reply-header">
 														<div class="img-box">
-															<img :src="file_url(reply.author.fileUrl)" alt=""
-																onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'">
+															<img
+																:src="file_url(reply.author.fileUrl)"
+																alt=""
+																onerror="this.src='http://www.bianbiangou.cn/index/ICON2.png'"
+															>
 														</div>
-														<span class="author">{{reply.author.userName}}</span>
+														<span class="author">{{ reply.author.userName }}</span>
 														<span
-															class="date fa fa-clock-o">{{reply.createTime| formatDate}}</span>
+															class="date fa fa-clock-o"
+														>{{ reply.createTime| formatDate }}</span>
 													</div>
-													<div class="reply-text">{{reply.content}}</div>
+													<div class="reply-text">{{ reply.content }}</div>
 												</li>
 											</ul>
 										</div>
 									</div>
 									<div class="footer">
-										<span class="fa fa-thumbs-o-up"
-											@click="likeComment(i)">赞({{i.extend2 || 0}})</span>
+										<span
+											class="fa fa-thumbs-o-up"
+											@click="likeComment(i)"
+										>赞({{ i.extend2 || 0 }})</span>
 										<span class="fa fa-reply" @click="setCurrent(i)">回复</span>
 									</div>
-									<commentBox v-if="current === i" v-model="reply" :isReply="true"
-										@handle="addReply(i)" />
+									<commentBox
+										v-if="current === i"
+										v-model="reply"
+										:is-reply="true"
+										@handle="addReply(i)"
+									/>
 								</div>
 							</template>
-							<myEmpty desc="还没有评论" v-else></myEmpty>
+							<myEmpty v-else desc="还没有评论" />
 						</div>
 					</myCard>
 				</div>
 			</el-col>
 			<el-col :span="6">
-				<Asider :toc="this.headlist"></Asider>
+				<Asider :toc="this.headlist" />
 			</el-col>
 		</el-row>
 	</div>
@@ -149,6 +184,11 @@ import {
 import * as type from '@/store/mutation_types'
 import { notEmpty, handleMsg, file_url, copy } from '@/utils'
 export default {
+	components: {
+		Asider,
+		myCard,
+		commentBox
+	},
 	props: ['id'],
 	data() {
 		return {
@@ -168,11 +208,6 @@ export default {
 			starInfo: {},
 			focusInfo: {}
 		}
-	},
-	components: {
-		Asider,
-		myCard,
-		commentBox
 	},
 	watch: {
 		'$route.params.id'(newValue) {
@@ -376,10 +411,10 @@ export default {
 
 		gotoDetail(i) {
 			this[type.SET_CURRENT_POST](i)
-			this.$router.push({ name: 'pArticle', params: { id: i.id } })
+			this.$router.push({ name: 'pArticle', params: { id: i.id }})
 		},
 		gotoList(id) {
-			this.$router.push({ name: 'pList', params: { id } })
+			this.$router.push({ name: 'pList', params: { id }})
 		},
 		async readOver() {
 			const { success } = await addViews({ id: this.currentPost.id })
@@ -406,7 +441,7 @@ export default {
 		},
 
 		editPost() {
-			this.$router.push({ name: 'pPost', query: { id: this.currentPost.id } })
+			this.$router.push({ name: 'pPost', query: { id: this.currentPost.id }})
 		}
 	},
 	computed: {
