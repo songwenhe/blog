@@ -185,24 +185,16 @@ div:focus {
   line-height: 1.5rem;
   margin-left: -1.2rem;
   margin-top: 0.5rem;
-  background-color: $main-blue;
+  background-color: #029764;
   border-radius: 2px;
   border-color: $main-blue-dark;
-  top: 0;
-  left: 0;
+  top: -8px;
+  left: 18px;
   font-size: 0.875rem;
   color: #fff;
   position: absolute;
   z-index: 99;
-  &::before {
-    position: absolute;
-    bottom: -1.2rem;
-    left: 0;
-    content: "";
-    border: solid transparent;
-    border-width: 0 1.2rem 1.2rem 0;
-    border-right-color: inherit;
-  }
+ 
   &.red {
     background-color: $main-red;
     border-color: $main-red-dark;

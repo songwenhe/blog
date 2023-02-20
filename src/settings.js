@@ -1,6 +1,5 @@
 module.exports = {
-
-  title: '考研笔记分享系统',
+  title: "博客系统",
 
   /**
    * @type {boolean} true | false
@@ -13,4 +12,4 @@ module.exports = {
    * @description Whether show the logo in sidebar
    */
   sidebarLogo: false
-}
+};
